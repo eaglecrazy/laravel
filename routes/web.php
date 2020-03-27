@@ -1,18 +1,53 @@
 <?php
 
+
+Route::get('/', 'HomeController@index')->name('Home');
+
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Админка
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Функции администратора
 |
 */
+Route::group(
+    [
+        'prefix' => 'admin',
+        'namespace' => 'Admin',
+        'as' => 'admin.'
+    ],
+    function () {
+        Route::get('/', 'AdminController@index')->name('index');
+        Route::get('/news', 'AdminController@news')->name('news');
+        Route::get('/users', 'AdminController@users')->name('users');
+    });
 
-$a = 1;
+/*
+|--------------------------------------------------------------------------
+| Новости
+|--------------------------------------------------------------------------
+|
+| Вывод новостей
+|
+*/
+Route::group(
+    [
+        'prefix' => 'news',
+        'namespace'=> 'News',
+        'as' => 'news.'
+    ],
+    function(){
+        Route::get('/', 'NewsController@showAll')->name('all');
+        Route::get('/{category}/{id}', 'NewsController@showItem')->name('item');
+        Route::get('/{category}', 'NewsController@showCategory')->name('category');
+    }
+);
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+//оставил для примера
+//Route::get('/admin',
+//    [
+//        'uses' => 'Admin\AdminController@index',
+//        'as' => 'Admin'
+//    ]);
