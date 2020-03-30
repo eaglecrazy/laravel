@@ -19,17 +19,25 @@ class NewsController extends Controller
             ]);
     }
 
-    //Параметр $category в методе не нужен, но без него не обойтись, насколько я понимаю?
-    //Route::get('/{category}/{id}', 'NewsController@showItem')->name('item');
     public function showItem($category, $id)
     {
         $item = News::getNewsItem($id);
+
+        //если неправильный id то редирект
+        if($item === null)
+            return redirect()->route('news.all');
+
         return view('news.news-item', ['id' => $id, 'item' => $item]);
     }
 
     public function showCategory($category)
     {
         $id = Category::getCategoryId($category);
+
+        //если неправильный id то редирект
+        if($id === null)
+            return redirect()->route('news.all');
+
         return view('news.news',
             [
                 'news' => News::getNewsByCategory($id),
