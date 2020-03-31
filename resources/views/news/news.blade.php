@@ -1,5 +1,8 @@
-@extends('layouts.app')
-{{--@extends('layouts.main')--}}
+@extends('layouts.main')
+
+@section('header')
+    @include('header.header-user')
+@endsection
 
 @section('title')
 {{-- Почему не работает эта конструкция? В заголовке страницы "1" --}}
@@ -8,9 +11,7 @@
 {{ isset($categoryName) ? $categoryName : 'Новости' }}
 @endsection
 
-@section('menu')
-    @include('menu')
-@endsection
+
 
 @section('content')
 

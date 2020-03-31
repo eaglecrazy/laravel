@@ -1,6 +1,6 @@
-@extends('layouts.app')
-@section('menu')
-    @include('admin.admin-menu')
+@extends('layouts.main')
+@section('header')
+    @include('header.header-admin')
 @endsection
 @section('content')
     <h1>Админка</h1>

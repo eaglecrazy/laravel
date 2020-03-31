@@ -1,12 +1,11 @@
-@extends('layouts.app')
-{{--@extends('layouts.main')--}}
+@extends('layouts.main')
 
 @section('title')
-    @parent Главная страница
+    Главная страница
 @endsection
 
-@section('menu')
-    @include ('menu')
+@section('header')
+    @include ('header.header-user')
 @endsection
 
 @section('content')
