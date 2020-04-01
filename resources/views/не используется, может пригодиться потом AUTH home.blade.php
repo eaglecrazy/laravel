@@ -1,3 +1,5 @@
+шаблон не используется, может пригодиться потом
+
 @extends('layouts.main')
 
 @section('header')

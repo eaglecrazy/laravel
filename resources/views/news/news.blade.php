@@ -5,17 +5,22 @@
 @endsection
 
 @section('title')
-{{-- Почему не работает эта конструкция? В заголовке страницы "1" --}}
-{{--{{ $categoryName or 'Новости'}}--}}
-{{-- поэтому сделал подлиннее --}}
-{{ isset($categoryName) ? $categoryName : 'Новости' }}
+    {{ $categoryName ?? 'Новости'}}
 @endsection
-
 
 
 @section('content')
 
-    @include('news.news-categories')
+    <div>
+        <h2>Разделы</h2>
+        @foreach ($categories as $item)
+            <a href="{{ route('news.category', $item['link']) }}">
+                {{ $item['name'] }}
+            </a>
+            <br>
+        @endforeach
+    </div>
+    <hr>
 
     @if (empty($categoryName))
         <h1>Новости</h1>
@@ -25,7 +30,7 @@
 
     <div>
         @forelse ($news as $id => $item)
-            <a href="{{ route('news.item', [App\Category::getCategoryLink($item['category']), $id]) }}">
+            <a href="{{ route('news.item', [$item['category'], $id]) }}">
                 {{ $item['title'] }}
             </a>
             <br>
