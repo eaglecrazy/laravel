@@ -34,11 +34,14 @@ Route::group(
 Route::group(
     [
         'prefix' => 'news',
-        'namespace'=> 'News',
+        'namespace' => 'News',
         'as' => 'news.'
     ],
-    function(){
+    function () {
         Route::get('/', 'NewsController@showAll')->name('all');
+        //этот роут специально сделал таким, чтобы ссылка была красивая
+        //как например реальная ссылка домен-категория-новость
+        //https://news.mail.ru/economics/41188789/
         Route::get('/{category}/{id}', 'NewsController@showItem')->name('item');
         Route::get('/{category}', 'NewsController@showCategory')->name('category');
     }
@@ -51,3 +54,7 @@ Route::group(
 //        'uses' => 'Admin\AdminController@index',
 //        'as' => 'Admin'
 //    ]);
+
+
+Auth::routes();
+//Route::get('/home', 'HomeController@index')->name('home');
