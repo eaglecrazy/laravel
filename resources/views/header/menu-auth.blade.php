@@ -1,11 +1,12 @@
 <!-- Authentication Links -->
+
 @guest
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('login') }}">{{ __('Войти') }}</a>
+        <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">{{ __('Войти') }}</a>
     </li>
     @if (Route::has('register'))
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('register') }}">{{ __('Регистрация') }}</a>
+            <a class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">{{ __('Регистрация') }}</a>
         </li>
     @endif
 @else

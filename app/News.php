@@ -63,12 +63,12 @@ class News extends Model
     }
 
     //метод меняем id категории на link во всех новостях
-    public static function changeCategoryIdToLink(array $news)
-    {
-        //работаем не с копией, а с исходным массивом
-        foreach ($news as &$item){
-            $item['category'] = Category::getCategoryLink($item['category']);
-        }
-        return $news;
-    }
+//    public static function changeCategoryIdToLink(array $news)
+//    {
+//        //работаем не с копией, а с исходным массивом
+//        foreach ($news as &$item){
+//            $item['category'] = Category::getCategoryLink($item['category']);
+//        }
+//        return $news;
+//    }
 }

@@ -4,9 +4,7 @@
     @include('header.header-user')
 @endsection
 
-@section('title')
-    {{ $item['title'] }}
-@endsection
+@section('title', $item['title'])
 
 @section('content')
     <h1>{{ $item['title'] }}</h1>

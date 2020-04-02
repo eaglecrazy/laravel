@@ -11,14 +11,12 @@ class NewsController extends Controller
 {
     public function showAll()
     {
-
         $news = News::getNewsAll();
-        $news = News::changeCategoryIdToLink($news);
         return view('news.news',
             [
                 'news' => $news,
                 'categories' => Category::getCategoryAll(),
-                'categoryName' => null
+                'categoryName' => null,
             ]);
     }
 

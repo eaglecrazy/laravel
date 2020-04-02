@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('title', 'Админка')
 @section('header')
     @include('header.header-admin')
 @endsection

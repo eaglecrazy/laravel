@@ -30,7 +30,7 @@
 
     <div>
         @forelse ($news as $id => $item)
-            <a href="{{ route('news.item', [$item['category'], $id]) }}">
+            <a href="{{ route('news.item', [ $categories[$item['category']]['link'], $id ]) }}">
                 {{ $item['title'] }}
             </a>
             <br>
