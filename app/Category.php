@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     private static $categories = [
-        1 => ['name' => 'Здоровье', 'link' => 'health' ],
-        2 => ['name' => 'Проишествия', 'link' => 'incidents' ],
-        3 => ['name' => 'Игры', 'link' => 'games' ],
+        1 => ['id' => 1, 'name' => 'Здоровье', 'link' => 'health' ],
+        2 => ['id' => 2, 'name' => 'Проишествия', 'link' => 'incidents' ],
+        3 => ['id' => 3, 'name' => 'Игры', 'link' => 'games' ],
     ];
 
     public static function getCategoryLink($id)

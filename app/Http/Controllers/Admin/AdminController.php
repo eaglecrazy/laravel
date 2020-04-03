@@ -22,10 +22,16 @@ class AdminController extends Controller
     public function news()
     {
         $news = News::getNewsAll();
-        return view('admin.news',
+        $news = News::addNumeration($news);
+        return view('admin.news.news',
             [
                 'news' => $news,
                 'categories' => Category::getCategoryAll()
             ]);
+    }
+
+    public function newsCreate(){
+        $categories = Category::getCategoryAll();
+        return view('admin.news.create', ['categories' => $categories]);
     }
 }

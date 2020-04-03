@@ -71,4 +71,14 @@ class News extends Model
 //        }
 //        return $news;
 //    }
+
+    //добавляем нумерацию всем новостям
+    public static function addNumeration($news)
+    {
+        $n = 1;
+        foreach ($news as &$item){
+            $item['number'] = $n++;
+        }
+        return $news;
+    }
 }

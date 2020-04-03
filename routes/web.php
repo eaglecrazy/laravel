@@ -22,6 +22,7 @@ Route::group(
         Route::get('/', 'AdminController@index')->name('index');
         Route::get('/news', 'AdminController@news')->name('news');
         Route::get('/news/create', 'AdminController@newsCreate')->name('news.create');
+        Route::post('/news/add', 'AdminController@newsAdd')->name('news.add');
         Route::get('/news/edit/{id}', 'AdminController@newsEdit')->name('news.edit');
         Route::get('/news/delete/{id}', 'AdminController@newsDelete')->name('news.delete');
         Route::get('/users', 'AdminController@users')->name('users');
