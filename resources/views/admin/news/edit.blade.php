@@ -1,36 +1,40 @@
 @extends('layouts.main')
-@section('title','Добавление новости')
+@section('title','Редактирование новости')
 @section('header')
     @include('header.header-admin')
 @endsection
 @section('content')
 
-
-    <div class="d-flex justify-content-center">
-        <form class="col-8" method="post" action={{ route('admin.news.add') }}>
+        @if($edit_status === 'error')
+            <h2 class="text-center text-danger">Ошибка редактирования</h2>
+        @elseif($edit_status === 'ok')
+            <h2 class="text-center text-success">Редактирование успешно</h2>
+        @endif
+        <form class="mx-auto col-8" method="post" action={{ route('admin.news.update') }}>
             @csrf
+            <input type="hidden" name="id" value="{{ $news_item['id'] }}">
             <div class="form-group">
                 <label for="news-name">Название новости</label>
-                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" required value="{{ old('title') }}">
+                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" required value="{{ $news_item['title'] }}">
             </div>
 
             <div class="form-group">
                 <label for="category">Категория</label>
                 <select class="form-control" id="category" name="category" required>
                     <option disabled value=""
-                        {{ old('category') === null ? 'selected' : ''  }}
+                        {{ $news_item['category'] === null ? 'selected' : ''  }}
                     >Выберите категорию</option>
-                    @foreach($categories as $item)
+                    @foreach($categories as $category_item)
                         <option
-                            value="{{ $item['id'] }}">{{ $item['name'] }}
-                            {{ old('category') === $item['name'] ? 'selected' : ''  }}
+                            value="{{ $category_item['id'] }}">{{ $category_item['name'] }}
+                            {{ $news_item['category'] === $category_item['name'] ? 'selected' : ''  }}
                         </option>
                     @endforeach
                 </select>
             </div>
             <div class="form-group">
                 <label for="text">Текст новости</label>
-                <textarea class="form-control" id="text" rows="15" name="content">{{ old('content') }}</textarea>
+                <textarea class="form-control" id="text" rows="15" name="content">{{ $news_item['content'] }}</textarea>
             </div>
 
 {{--    Потом пригодится наверняка        --}}
@@ -44,6 +48,5 @@
 
             <button type="submit" class="btn btn-lg btn-primary ">Отправить</button>
         </form>
-    </div>
 
 @endsection

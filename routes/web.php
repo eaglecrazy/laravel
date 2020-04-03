@@ -20,12 +20,33 @@ Route::group(
     ],
     function () {
         Route::get('/', 'AdminController@index')->name('index');
-        Route::get('/news', 'AdminController@news')->name('news');
-        Route::get('/news/create', 'AdminController@newsCreate')->name('news.create');
-        Route::post('/news/add', 'AdminController@newsAdd')->name('news.add');
-        Route::get('/news/edit/{id}', 'AdminController@newsEdit')->name('news.edit');
-        Route::get('/news/delete/{id}', 'AdminController@newsDelete')->name('news.delete');
-        Route::get('/users', 'AdminController@users')->name('users');
+
+        //админ - новости
+        Route::group(
+            [
+                'prefix' => 'news',
+                'as' => 'news.'
+            ],
+            function () {
+                Route::get('index', 'AdminController@news')->name('index');
+                Route::get('create', 'AdminController@newsCreate')->name('create');
+                Route::match(['get', 'post'],'add', 'AdminController@newsAdd')->name('add');
+                Route::match(['get', 'post'],'update', 'AdminController@newsUpdate')->name('update');
+                Route::get('edit/{id}', 'AdminController@newsEdit')->name('edit');
+                Route::get('delete/{id}', 'AdminController@newsDelete')->name('delete');
+            }
+        );
+
+        //админ - пользователи
+        Route::group(
+            [
+                'prefix' => 'users',
+                'as' => 'users.'
+            ],
+            function () {
+                Route::get('index', 'AdminController@users')->name('index');
+            }
+        );
     });
 
 /*
