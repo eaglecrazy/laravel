@@ -91,13 +91,15 @@ class AdminController extends Controller
     }
 
     //удаление новости
-    public function newsDelete($id){
+    public function newsDelete($id)
+    {
         News::deleteNews($id);
         return redirect()->route('admin.news.index');
     }
 
     //экспорт
-    public function newsExport(){
-        return News::getFile();
+    public function newsExport()
+    {
+        return response()->download(News::getFileName());
     }
 }

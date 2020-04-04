@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use File;
 use Storage;
 
 
-const FILE = '/files/news.json';
+//const FILE = '/files/news.json';
+const FILE = '/home/vagrant/code/laravel/storage/app/files/news.json';
 const FILE_PUBLIC = '/public/news.json';
 
 
@@ -15,7 +17,7 @@ class News extends Model
 
     public static function getNewsAll()
     {
-        $json = Storage::get(FILE);
+        $json = File::get(FILE);
         return json_decode($json, true);
 
     }
@@ -40,6 +42,10 @@ class News extends Model
         return $result;
     }
 
+//ВОПРОС "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
+//Это не индексы, а нумерация строк таблицы, используемая при во вьюхе. Новость с id=10 может быть на 7 строке.
+// Не нашёл как грамотно прямо во вьюхе сделать нумерацию без JS, поэтому и передаю с данными.
+
     //добавляем нумерацию всем новостям
     public static function addNumeration($news)
     {
@@ -49,6 +55,9 @@ class News extends Model
         }
         return $news;
     }
+
+//ВОПРОС. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
+//ОТВЕТ. Да, реализовал не только изменение и удаление новостей. Не по заданию, зато больше практики.
 
     //сохраняем новость
     public static function saveNews($new, $update = false)
@@ -68,7 +77,7 @@ class News extends Model
             }
         }
         $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        Storage::put(FILE, $json);
+        File::put(FILE, $json);
     }
 
 
@@ -93,16 +102,13 @@ class News extends Model
         $news = News::getNewsAll();
         unset($news[$id]);
         $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        Storage::put(FILE, $json);
+        File::put(FILE, $json);
     }
 
     //копирует файл с новостями в папку public
-    public static function getFile()
+    public static function getFileName()
     {
-        if(Storage::exists(FILE_PUBLIC))
-            Storage::delete(FILE_PUBLIC);
-        Storage::copy(FILE, FILE_PUBLIC);
-        return Storage::download(FILE_PUBLIC);
+        return FILE;
     }
 
 
