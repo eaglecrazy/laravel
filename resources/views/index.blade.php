@@ -8,5 +8,4 @@
 
 @section('content')
     <h1>Главная страница</h1>
-    {{ Form::label('111') }}
 @endsection

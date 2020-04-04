@@ -34,10 +34,13 @@ class AdminController extends Controller
     }
 
     //страница создания новости
-    public function newsCreate()
+    public function newsCreate(Request $request)
     {
+        //уведомление была ли ошибка при создании
+        $create_status = $request->only('create_status')['create_status'] ?? '';
+
         $categories = Category::getCategoryAll();
-        return view('admin.news.create', ['categories' => $categories]);
+        return view('admin.news.create', ['categories' => $categories, 'create_status' => $create_status]);
     }
 
     //добавление новости
@@ -49,7 +52,7 @@ class AdminController extends Controller
             //проверим на ошибки
             if (News::thereIsError($new)) {
                 $request->flash();
-                return redirect()->route('admin.news.create');
+                return redirect()->route('admin.news.create', ['create_status' => 'error']);
             }
             //сохраним новость
             News::saveNews($new);
@@ -61,13 +64,13 @@ class AdminController extends Controller
     public function newsEdit($id, Request $request)
     {
         //уведомление была ли ошибка при редактировании
-        $edit_error = $request->only('edit_status')['edit_error'] ?? '';
+        $edit_status = $request->only('edit_status')['edit_status'] ?? '';
 
         $categories = Category::getCategoryAll();
         $news_item = News::getNewsItem($id);
         if (empty($news_item))
             redirect()->route('admin.news.index');
-        return view('admin.news.edit', ['news_item' => $news_item, 'categories' => $categories, 'edit_status' => $edit_error]);
+        return view('admin.news.edit', ['news_item' => $news_item, 'categories' => $categories, 'edit_status' => $edit_status]);
     }
 
     //обновление новости
@@ -81,13 +84,20 @@ class AdminController extends Controller
                 $request->flash();
                 return redirect()->route('admin.news.edit', [$new['id'], 'edit_status' => 'error']);
             }
-            //сохраним новость
-//            News::saveNews($new);
-
-            Сохранить новость
-            Сделать статусы добавления новости
-
+            //перезапишем новость
+            News::saveNews($new, true);
         }
         return redirect()->route('admin.news.edit', [$new['id'], 'edit_status' => 'ok']);
+    }
+
+    //удаление новости
+    public function newsDelete($id){
+        News::deleteNews($id);
+        return redirect()->route('admin.news.index');
+    }
+
+    //экспорт
+    public function newsExport(){
+        return News::getFile();
     }
 }

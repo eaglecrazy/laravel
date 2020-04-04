@@ -5,10 +5,9 @@
 @endsection
 @section('content')
 
-    <a href="{{ route('admin.news.add') }}" class="btn btn-primary btn-lg mb-3" role="button">Сделать файл</a>
-
     <h1>Управление новостями</h1>
     <a href="{{ route('admin.news.create') }}" class="btn btn-primary btn-lg mb-3" role="button">Добавить новость</a>
+    <a href="{{ route('admin.news.export') }}" class="btn btn-primary btn-lg mb-3" role="button">Экспорт новостей</a>
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
         <tr>

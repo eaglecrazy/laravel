@@ -5,9 +5,11 @@
 @endsection
 @section('content')
 
+    @if($create_status === 'error')
+        <h2 class="text-center text-danger">Ошибка создания новости</h2>
+    @endif
 
-    <div class="d-flex justify-content-center">
-        <form class="col-8" method="post" action={{ route('admin.news.add') }}>
+        <form class="mx-auto" method="post" action={{ route('admin.news.add') }}>
             @csrf
             <div class="form-group">
                 <label for="news-name">Название новости</label>
@@ -44,6 +46,5 @@
 
             <button type="submit" class="btn btn-lg btn-primary ">Отправить</button>
         </form>
-    </div>
 
 @endsection

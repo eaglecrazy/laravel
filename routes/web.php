@@ -30,6 +30,7 @@ Route::group(
             function () {
                 Route::get('index', 'AdminController@news')->name('index');
                 Route::get('create', 'AdminController@newsCreate')->name('create');
+                Route::get('export', 'AdminController@newsExport')->name('export');
                 Route::match(['get', 'post'],'add', 'AdminController@newsAdd')->name('add');
                 Route::match(['get', 'post'],'update', 'AdminController@newsUpdate')->name('update');
                 Route::get('edit/{id}', 'AdminController@newsEdit')->name('edit');

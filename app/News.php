@@ -3,56 +3,19 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 
-const FILE = '/home/vagrant/code/laravel/resources/files/news.json';
+const FILE = '/files/news.json';
+const FILE_PUBLIC = '/public/news.json';
 
 
 class News extends Model
 {
-//    private static $news = [
-//        1 =>
-//            [
-//                'id' => '1',
-//                'title' => 'Удивительный стакан',
-//                'content' => 'Брату Владимира из Апатитов Максиму достался стакан с пепси, у которого в крышке два отверстия для трубочек. "Да это ещё и не пепси, а Кока-Кола!!!"— выразил своё недовольство работой учреждения общепита Максим.',
-//                'category' => 1
-//            ],
-//        2 =>
-//            [
-//                'id' => '2',
-//                'title' => 'Перепутал',
-//                'content' => 'Михаил из Санкт-Петербурга решил помыть руки в общественном месте, но перепутал жидкое мыло с лосьоном для рук. "Честно, это было шоком для меня! Но ведь бутылочки - они же так похожи! - делится переживаниями потерпевший - Никому не желаю столкнуться с такой же ситуацией в жизни...". К сожалению, управляющий данной уборной комнаты отказался от общения с журналистами по данному вопросу.',
-//                'category' => 2
-//            ],
-//        3 =>
-//            [
-//                'id' => '3',
-//                'title' => 'Вкусный завтрак',
-//                'content' => 'Оля из Москвы попыталась приготовить омлет. " Чуть не подожгла весь дом, испачкала всю плиту и посуду, испортила сковородку, обожгла палец. Омлет получился некрасивым, но довольно вкусным." - комментирует москвичка.',
-//                'category' => 1
-//            ],
-//
-//        4 =>
-//            [
-//                'id' => '4',
-//                'title' => 'Странный орех',
-//                'content' => 'Пятого февраля где-то в Красноярске коренной красноярец Павел Солусенко , сидя у себя на кухне, предавался употреблению грецких орехов. Неожиданно глазам серийного поедателя предстал орех совершенно странного вида. "Это невероятно, поражён до глубины души." - прокомментировал данное происшествие наш герой.',
-//                'category' => 1
-//            ],
-//        5 =>
-//            [
-//                'id' => '5',
-//                'title' => 'Неудачное чаепитие',
-//                'content' => 'У Екатерины из Смоленска порвался чайный пакетик и почти весь чай просыпался на пол. "Это было неожиданно, а второго пакетика у меня с собой не оказалось", - с расстройством подмечает девушка.',
-//                'category' => 1
-//            ],
-//    ];
-
 
     public static function getNewsAll()
     {
-        $json = file_get_contents(FILE);
+        $json = Storage::get(FILE);
         return json_decode($json, true);
 
     }
@@ -60,8 +23,9 @@ class News extends Model
     public static function getNewsItem($id)
     {
         $news = static::getNewsAll();
-        if (array_key_exists($id, $news))
+        if (array_key_exists($id, $news)) {
             return $news[$id];
+        }
         return null;
     }
 
@@ -76,16 +40,6 @@ class News extends Model
         return $result;
     }
 
-    //метод меняем id категории на link во всех новостях
-//    public static function changeCategoryIdToLink(array $news)
-//    {
-//        //работаем не с копией, а с исходным массивом
-//        foreach ($news as &$item){
-//            $item['category'] = Category::getCategoryLink($item['category']);
-//        }
-//        return $news;
-//    }
-
     //добавляем нумерацию всем новостям
     public static function addNumeration($news)
     {
@@ -96,19 +50,31 @@ class News extends Model
         return $news;
     }
 
-    public static function saveNews($new)
+    //сохраняем новость
+    public static function saveNews($new, $update = false)
     {
         $news = News::getNewsAll();
-        $new['id'] = (int)$news[count($news)]['id'] + 1;
-        $news[] = $new;
+        //если добавление новости генерируем id
+        if ($update == false) {
+            $new['id'] = (int)$news[count($news)]['id'] + 1;
+            $news[] = $new;
+        } else {
+            //иначе ищем элемент с таким id и заменяем
+            foreach ($news as &$item) {
+                if ($item['id'] == $new['id']) {
+                    $item = $new;
+                    break;
+                }
+            }
+        }
         $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        file_put_contents(FILE, $json);
+        Storage::put(FILE, $json);
     }
+
 
     //проверка есть ли ошибки в новости
     public static function thereIsError($new)
     {
-        return true;
         //проверка существования ключей
         if (!array_key_exists('title', $new) || !array_key_exists('category', $new) || !array_key_exists('content', $new))
             return true;
@@ -119,6 +85,24 @@ class News extends Model
         if (empty(Category::getCategoryName($new['category'])))
             return true;
         return false;
+    }
+
+    //удаление новости
+    public static function deleteNews($id)
+    {
+        $news = News::getNewsAll();
+        unset($news[$id]);
+        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        Storage::put(FILE, $json);
+    }
+
+    //копирует файл с новостями в папку public
+    public static function getFile()
+    {
+        if(Storage::exists(FILE_PUBLIC))
+            Storage::delete(FILE_PUBLIC);
+        Storage::copy(FILE, FILE_PUBLIC);
+        return Storage::download(FILE_PUBLIC);
     }
 
 

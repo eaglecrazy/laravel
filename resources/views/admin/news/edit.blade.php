@@ -4,7 +4,6 @@
     @include('header.header-admin')
 @endsection
 @section('content')
-
         @if($edit_status === 'error')
             <h2 class="text-center text-danger">Ошибка редактирования</h2>
         @elseif($edit_status === 'ok')
@@ -22,12 +21,15 @@
                 <label for="category">Категория</label>
                 <select class="form-control" id="category" name="category" required>
                     <option disabled value=""
-                        {{ $news_item['category'] === null ? 'selected' : ''  }}
-                    >Выберите категорию</option>
+                        {{ $news_item['category'] === null ? 'selected' : ''  }}>
+                        Выберите категорию
+                    </option>
                     @foreach($categories as $category_item)
                         <option
-                            value="{{ $category_item['id'] }}">{{ $category_item['name'] }}
-                            {{ $news_item['category'] === $category_item['name'] ? 'selected' : ''  }}
+                            {{ $news_item['category'] == $category_item['id'] ? 'selected' : ''  }}
+                            value="{{ $category_item['id'] }}"
+                        >
+                            {{ $category_item['name'] }}
                         </option>
                     @endforeach
                 </select>
