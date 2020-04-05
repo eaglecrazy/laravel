@@ -34,13 +34,10 @@ class AdminController extends Controller
     }
 
     //страница создания новости
-    public function newsCreate(Request $request)
+    public function newsCreate()
     {
-        //уведомление была ли ошибка при создании
-        $create_status = $request->only('create_status')['create_status'] ?? '';
-
         $categories = Category::getCategoryAll();
-        return view('admin.news.create', ['categories' => $categories, 'create_status' => $create_status]);
+        return view('admin.news.create', ['categories' => $categories]);
     }
 
     //добавление новости
@@ -49,52 +46,57 @@ class AdminController extends Controller
         if ($request->isMethod('post')) {
             //получим новость
             $new = $request->only(['title', 'category', 'content']);
+
             //проверим на ошибки
             if (News::thereIsError($new)) {
                 $request->flash();
-                return redirect()->route('admin.news.create', ['create_status' => 'error']);
+                $alert = ['type' => 'danger', 'text' => 'Ошибка добавления новости.'];
+                return redirect()->route('admin.news.create')->with('alert', $alert);
             }
+
             //сохраним новость
+            $alert = ['type' => 'success', 'text' => 'Новость успешно добавлена.'];
             News::saveNews($new);
         }
-        return redirect()->route('admin.news.index');
+        return redirect()->route('admin.news.index')->with('alert', $alert);
     }
 
     //страница редактирования новости
-    public function newsEdit($id, Request $request)
+    public function newsEdit($id)
     {
-        //уведомление была ли ошибка при редактировании
-        $edit_status = $request->only('edit_status')['edit_status'] ?? '';
-
-        $categories = Category::getCategoryAll();
         $news_item = News::getNewsItem($id);
         if (empty($news_item))
             redirect()->route('admin.news.index');
-        return view('admin.news.edit', ['news_item' => $news_item, 'categories' => $categories, 'edit_status' => $edit_status]);
+        $categories = Category::getCategoryAll();
+        return view('admin.news.edit', ['news_item' => $news_item, 'categories' => $categories]);
     }
 
     //обновление новости
     public function newsUpdate(Request $request)
     {
+        $alert = null;
         if ($request->isMethod('post')) {
             //получим новость
             $new = $request->only(['title', 'category', 'content', 'id']);
             //проверим на ошибки
             if (News::thereIsError($new)) {
                 $request->flash();
-                return redirect()->route('admin.news.edit', [$new['id'], 'edit_status' => 'error']);
+                $alert = ['type' => 'danger', 'text' => 'Ошибка изменения новости.'];
+            } else {
+                //перезапишем новость
+                News::saveNews($new, true);
+                $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
             }
-            //перезапишем новость
-            News::saveNews($new, true);
         }
-        return redirect()->route('admin.news.edit', [$new['id'], 'edit_status' => 'ok']);
+        return redirect()->route('admin.news.edit', $new['id'])->with('alert', $alert);
     }
 
     //удаление новости
     public function newsDelete($id)
     {
         News::deleteNews($id);
-        return redirect()->route('admin.news.index');
+        $alert = ['type' => 'info', 'text' => 'Новость удалена.'];
+        return redirect()->route('admin.news.index')->with('alert', $alert);
     }
 
     //экспорт

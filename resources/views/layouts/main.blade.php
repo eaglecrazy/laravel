@@ -23,8 +23,9 @@
 <body>
 <div id="app">
     @yield('header')
-    <div class="container">
+        <div class="container">
         <main class="py-4">
+            @yield('alert')
             @yield('content')
         </main>
     </div>

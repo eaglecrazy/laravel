@@ -3,12 +3,14 @@
 @section('header')
     @include('header.header-admin')
 @endsection
+
+@if(session('alert'))
+    @section('alert')
+        @include('alert')
+    @endsection
+@endif
+
 @section('content')
-        @if($edit_status === 'error')
-            <h2 class="text-center text-danger">Ошибка редактирования</h2>
-        @elseif($edit_status === 'ok')
-            <h2 class="text-center text-success">Редактирование успешно</h2>
-        @endif
         <form class="mx-auto col-8" method="post" action={{ route('admin.news.update') }}>
             @csrf
             <input type="hidden" name="id" value="{{ $news_item['id'] }}">

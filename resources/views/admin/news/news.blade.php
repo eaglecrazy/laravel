@@ -3,6 +3,13 @@
 @section('header')
     @include('header.header-admin')
 @endsection
+
+@if(session('alert'))
+    @section('alert')
+        @include('alert')
+    @endsection
+@endif
+
 @section('content')
 
     <h1>Управление новостями</h1>
