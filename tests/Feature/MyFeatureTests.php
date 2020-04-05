@@ -3,15 +3,15 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ExampleTest extends TestCase
+class MyFeatureTests extends TestCase
 {
     public function testResponseStatusAndText()
     {
         $response = $this->get('/');
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSeeText('Главная страница');
+        $response->assertViewIs('index');
 
         $response = $this->get('admin');
         $response->assertStatus(200);
@@ -23,6 +23,7 @@ class ExampleTest extends TestCase
 
         $response = $this->get('admin/news/export');
         $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/json');
 
         $response = $this->get('admin/users/index');
         $response->assertStatus(200);
@@ -32,6 +33,7 @@ class ExampleTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeText('Разделы');
 
+
         $response = $this->get('news/games');
         $response->assertStatus(200);
         $response->assertSeeText('Новости раздела Игры');
@@ -39,5 +41,7 @@ class ExampleTest extends TestCase
         $response = $this->get('news/games/1');
         $response->assertStatus(200);
         $response->assertSeeText('Удивительный стакан');
+
+
     }
 }

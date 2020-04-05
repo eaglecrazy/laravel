@@ -195,6 +195,7 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="d6f00cf7-685a-48a1-a75f-4bb566ce3cdb" load_method="CUSTOM_LOADER" configuration_file_path="/home/vagrant/code/laravel/phpunit.xml" custom_loader_path="/home/vagrant/code/laravel/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <PhpUnitSettings load_method="CUSTOM_LOADER" configuration_file_path="$PROJECT_DIR$/phpunit.xml" custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" use_configuration_file="true" />
     </phpunit_settings>
   </component>
 </project>
