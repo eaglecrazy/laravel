@@ -45,7 +45,7 @@ class AdminController extends Controller
     {
         if ($request->isMethod('post')) {
             //получим новость
-            $new = $request->only(['title', 'category', 'content']);
+            $new = $request->only(['title', 'category', 'content', 'image']);
 
             //проверим на ошибки
             if (News::thereIsError($new)) {
@@ -77,7 +77,7 @@ class AdminController extends Controller
         $alert = null;
         if ($request->isMethod('post')) {
             //получим новость
-            $new = $request->only(['title', 'category', 'content', 'id']);
+            $new = $request->only(['title', 'category', 'content', 'id', 'image']);
             //проверим на ошибки
             if (News::thereIsError($new)) {
                 $request->flash();

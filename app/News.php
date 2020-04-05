@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use File;
 use Storage;
 
-
-//const FILE = '/files/news.json';
-const FILE = '/home/vagrant/code/laravel/storage/app/files/news.json';
-const FILE_PUBLIC = '/public/news.json';
+$GLOBALS['file'] = storage_path() . '/app/files/news.json';
 
 
 class News extends Model
@@ -17,7 +14,7 @@ class News extends Model
 
     public static function getNewsAll()
     {
-        $json = File::get(FILE);
+        $json = File::get($GLOBALS['file']);
         return json_decode($json, true);
 
     }
@@ -62,6 +59,12 @@ class News extends Model
     //сохраняем новость
     public static function saveNews($new, $update = false)
     {
+        $url = null;
+        if(isset($new['image'])){
+            $path = Storage::putFile('public/images', $new['image']);
+            dd($path);
+        }
+
         $news = News::getNewsAll();
         //если добавление новости генерируем id
         if ($update == false) {
@@ -76,8 +79,8 @@ class News extends Model
                 }
             }
         }
-        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        File::put(FILE, $json);
+        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        File::put($GLOBALS['file'], $json);
     }
 
 
@@ -101,15 +104,12 @@ class News extends Model
     {
         $news = News::getNewsAll();
         unset($news[$id]);
-        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        File::put(FILE, $json);
+        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        File::put($GLOBALS['file'], $json);
     }
 
-    //копирует файл с новостями в папку public
-    public static function getFileName()
+        public static function getFileName()
     {
-        return FILE;
+        return $GLOBALS['file'];
     }
-
-
 }

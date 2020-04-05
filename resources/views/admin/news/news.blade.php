@@ -13,7 +13,7 @@
 @section('content')
 
     <h1>Управление новостями</h1>
-    <a href="{{ route('admin.news.create') }}" class="btn btn-primary btn-lg mb-3" role="button">Добавить новость</a>
+    <a href="{{ route('admin.news.create') }}" class="btn btn-primary btn-lg mb-3 mr-2" role="button">Добавить новость</a>
     <a href="{{ route('admin.news.export') }}" class="btn btn-primary btn-lg mb-3" role="button">Экспорт новостей</a>
     <table class="table table-striped table-hover">
         <thead class="thead-dark">

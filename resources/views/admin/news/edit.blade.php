@@ -40,17 +40,13 @@
                 <label for="text">Текст новости</label>
                 <textarea class="form-control" id="text" rows="15" name="content">{{ $news_item['content'] }}</textarea>
             </div>
+            <div class="form-group">
+                <label for="image">Изображение</label>
+                <img src="{{ $item['image'] ?? asset('storage/images/news-default.jpg') }}" class="img-fluid d-block w-75 mb-3" alt="">
+                <input type="file" class="form-control-file" id="image">
+            </div>
 
-{{--    Потом пригодится наверняка        --}}
-{{--            <div class="form-group">--}}
-{{--                <label for="exampleInputFile">File input</label>--}}
-{{--                <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">--}}
-{{--                <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the--}}
-{{--                    above input. It's a bit lighter and easily wraps to a new line.</small>--}}
-{{--            </div>--}}
-
-
-            <button type="submit" class="btn btn-lg btn-primary ">Отправить</button>
+            <button type="submit" class="btn btn-lg btn-primary">Сохранить</button>
         </form>
 
 @endsection
