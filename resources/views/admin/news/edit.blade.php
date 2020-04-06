@@ -13,22 +13,22 @@
 @section('content')
         <form class="mx-auto col-8" method="post" enctype="multipart/form-data" action={{ route('admin.news.update') }}>
             @csrf
-            <input type="hidden" name="id" value="{{ $news_item['id'] }}">
+            <input type="hidden" name="id" value="{{ $news_item->id }}">
             <div class="form-group">
                 <label for="news-name">Название новости</label>
-                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" required value="{{ $news_item['title'] }}">
+                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" required value="{{ $news_item->title }}">
             </div>
 
             <div class="form-group">
                 <label for="category">Категория</label>
                 <select class="form-control" id="category" name="category" required>
                     <option disabled value=""
-                        {{ $news_item['category'] === null ? 'selected' : ''  }}>
+                        {{ $news_item->category === null ? 'selected' : ''  }}>
                         Выберите категорию
                     </option>
                     @foreach($categories as $category_item)
                         <option
-                            {{ $news_item['category'] == $category_item['id'] ? 'selected' : ''  }}
+                            {{ $news_item->category == $category_item['id'] ? 'selected' : ''  }}
                             value="{{ $category_item['id'] }}"
                         >
                             {{ $category_item['name'] }}
@@ -38,12 +38,12 @@
             </div>
             <div class="form-group">
                 <label for="text">Текст новости</label>
-                <textarea class="form-control" id="text" rows="15" name="content">{{ $news_item['content'] }}</textarea>
+                <textarea class="form-control" id="text" rows="15" name="content">{{ $news_item->text }}</textarea>
             </div>
             <div class="form-group">
                 <label for="image">Изображение</label>
-                @if($news_item['image'])
-                    <img src="{{ asset($GLOBALS['img-folder'] . $news_item['image']) }}" class="img-fluid d-block w-75 mb-3" alt="">
+                @if($news_item->image)
+                    <img src="{{ asset($GLOBALS['img-folder'] . $news_item->image) }}" class="img-fluid d-block w-75 mb-3" alt="">
                 @else
                     <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block w-75 mb-3" alt="">
                 @endif

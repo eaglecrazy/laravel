@@ -13,9 +13,9 @@
 
     <div>
         <h2>Разделы</h2>
-        @foreach ($categories as $item)
-            <a href="{{ route('news.category', $item['link']) }}">
-                {{ $item['name'] }}
+        @foreach ($categories as $category_item)
+            <a href="{{ route('news.category', $category_item->link) }}">
+                {{ $category_item->name }}
             </a>
             <br>
         @endforeach
@@ -29,12 +29,12 @@
     @endif
 
     <div class="col-10">
-        @forelse ($news as $id => $item)
+        @forelse ($news as $news_item)
             <div class="pl-2 my-4">
-                <a href="{{ route('news.item', [ $categories[$item['category']]['link'], $id ]) }}">
-                    <h2>{{ $item['title'] }}</h2>
-                    @if($item['image'])
-                        <img src="{{ asset($GLOBALS['img-folder'] . $item['image']) }}" class="img-fluid d-block my-3 w-50">
+                <a href="{{ route('news.item', [$categories[$news_item->category]->link, $news_item->id]) }}">
+                    <h2>{{ $news_item->title }}</h2>
+                    @if($news_item->image)
+                        <img src="{{ asset($GLOBALS['img-folder'] . $news_item->image) }}" class="img-fluid d-block my-3 w-50">
                     @else
                         <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block my-3 w-50">
                     @endif

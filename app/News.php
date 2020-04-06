@@ -4,7 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use File;
+use Illuminate\Support\Facades\DB;
 use Storage;
+
+//Для хранения путей (они используются ещё и во вьюхах) я использовал $GLOBALS,
+//чтобы не хранить в БД повторяющуюся информацию в каждой записи
+//Или такие вещи лучше в конфиге хранить?
 
 $GLOBALS['file'] = storage_path() . '/app/files/news.json';
 $GLOBALS['images-save-folder'] = 'public/images/';
@@ -16,17 +21,14 @@ class News extends Model
 
     public static function getNewsAll()
     {
-        $json = File::get($GLOBALS['file']);
-        return json_decode($json, true);
-
+        return DB::table('news')->get();
     }
 
     public static function getNewsItem($id)
     {
-        $news = static::getNewsAll();
-        if (array_key_exists($id, $news)) {
-            return $news[$id];
-        }
+        $result = DB::table('news')->find($id);
+        if($result)
+            return $result;
         return null;
     }
 
@@ -34,14 +36,14 @@ class News extends Model
     {
         $result = [];
         $news = static::getNewsAll();
-        foreach ($news as $id => $item) {
-            if ($item['category'] == $category)
-                $result[$id] = $item;
+        foreach ($news as $news_item) {
+            if ($news_item->category == $category)
+                $result[] = $news_item;
         }
         return $result;
     }
 
-//ВАШ ВОПРОС "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
+//ВАШ КОММЕНТАРИЙ "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
 //Это не индексы, а нумерация строк таблицы, используемая при во вьюхе. Новость с id=10 может быть на 7 строке.
 // Не нашёл как грамотно прямо во вьюхе сделать нумерацию без JS, поэтому и передаю с данными.
 
@@ -50,12 +52,12 @@ class News extends Model
     {
         $n = 1;
         foreach ($news as &$item) {
-            $item['number'] = $n++;
+            $item->number = $n++;
         }
         return $news;
     }
 
-//ВАШ ВОПРОС. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
+//ВАШ КОММЕНТАРИЙ. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
 //ОТВЕТ. Да, реализовал не только изменение и удаление новостей. Не по заданию, зато больше практики.
 // Перенёс изменение в отдельный метод.
 
@@ -71,7 +73,7 @@ class News extends Model
 
         $news = News::getNewsAll();
         //генерируем уникальный id
-        $new['id'] = end($news)['id'] + 1;
+        $new['id'] = end($news)->id + 1;
         $new['image'] = $file_name;
         $news[] = $new;
 
@@ -82,6 +84,8 @@ class News extends Model
     //сохраняем новость
     public static function updateNews($new)
     {
+
+//todo поменять на БД
         $file_name = null;
         //если был прикреплён файл
         if (isset($new['image'])) {
@@ -92,13 +96,13 @@ class News extends Model
         //ищем элемент с таким id и заменяем
         $news = News::getNewsAll();
         foreach ($news as &$item) {
-            if ($item['id'] == $new['id']) {
+            if ($item->id == $new['id']) {
                 //если файл не прикреплён, то сохраним старый файл
                 if ($file_name === null) {
-                    $new['image'] = $item['image'];
+                    $new['image'] = $item->image;
                 } else {//если файл прикреплён, то удалим старый файл и присвоим новый
-                    if (isset($item['image'])) {
-                        $old_path = $GLOBALS['images-save-folder'] . $item['image'];
+                    if (isset($item->image)) {
+                        $old_path = $GLOBALS['images-save-folder'] . $item->image;
                         Storage::delete($old_path);
                     }
                     $new['image'] = $file_name;
@@ -121,7 +125,7 @@ class News extends Model
         if ($new['title'] == '' || $new['category'] == '' || $new['content'] == '')
             return true;
         //проверка на существование в категориях $new['category']
-        if (empty(Category::getCategoryName($new['category'])))
+        if (empty(Category::getCategoryNameById($new['category'])))
             return true;
         return false;
     }
@@ -129,10 +133,11 @@ class News extends Model
     //удаление новости
     public static function deleteNews($id)
     {
+//todo поменять на БД
         $news = News::getNewsAll();
         //удалим файл
-        if (isset($news[$id]['image'])) {
-            $path = $GLOBALS['images-save-folder'] . $news[$id]['image'];
+        if (isset($news[$id]->image)) {
+            $path = $GLOBALS['images-save-folder'] . $news[$id]->image;
             Storage::delete($path);
         }
         unset($news[$id]);

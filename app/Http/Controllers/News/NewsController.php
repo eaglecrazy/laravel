@@ -31,9 +31,9 @@ class NewsController extends Controller
         return view('news.news-item', ['id' => $id, 'item' => $item]);
     }
 
-    public function showCategory($category)
+    public function showCategory($category_link)
     {
-        $id = Category::getCategoryId($category);
+        $id = Category::getCategoryIdByLink($category_link);
 
         //если неправильный id то редирект
         if($id === null)
@@ -43,7 +43,7 @@ class NewsController extends Controller
             [
                 'news' => News::getNewsByCategory($id),
                 'categories' => Category::getCategoryAll(),
-                'categoryName' => Category::getCategoryName($id)
+                'categoryName' => Category::getCategoryNameById($id)
             ]);
     }
 }

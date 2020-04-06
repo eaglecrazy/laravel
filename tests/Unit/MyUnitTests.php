@@ -11,7 +11,6 @@ class MyUnitTests extends TestCase
     public function testCategory()
     {
         $this->assertIsArray(Category::getCategoryAll());
-        $this->assertIsString(Category::getCategoryLink(1));
     }
 
     public function testNews()
