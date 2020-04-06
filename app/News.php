@@ -7,6 +7,8 @@ use File;
 use Storage;
 
 $GLOBALS['file'] = storage_path() . '/app/files/news.json';
+$GLOBALS['images-save-folder'] = 'public/images/';
+$GLOBALS['img-folder'] = 'storage/images/';
 
 
 class News extends Model
@@ -39,7 +41,7 @@ class News extends Model
         return $result;
     }
 
-//ВОПРОС "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
+//ВАШ ВОПРОС "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
 //Это не индексы, а нумерация строк таблицы, используемая при во вьюхе. Новость с id=10 может быть на 7 строке.
 // Не нашёл как грамотно прямо во вьюхе сделать нумерацию без JS, поэтому и передаю с данными.
 
@@ -53,36 +55,61 @@ class News extends Model
         return $news;
     }
 
-//ВОПРОС. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
+//ВАШ ВОПРОС. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
 //ОТВЕТ. Да, реализовал не только изменение и удаление новостей. Не по заданию, зато больше практики.
+// Перенёс изменение в отдельный метод.
 
     //сохраняем новость
-    public static function saveNews($new, $update = false)
+    public static function saveNews($new)
     {
-        $url = null;
-        if(isset($new['image'])){
-            $path = Storage::putFile('public/images', $new['image']);
-            dd($path);
+        //работаем с файлом
+        $file_name = null;
+        if (isset($new['image'])) {
+            $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
+            $file_name = File::name($path) . '.' . File::extension($path);
         }
 
         $news = News::getNewsAll();
-        //если добавление новости генерируем id
-        if ($update == false) {
-            $new['id'] = (int)$news[count($news)]['id'] + 1;
-            $news[] = $new;
-        } else {
-            //иначе ищем элемент с таким id и заменяем
-            foreach ($news as &$item) {
-                if ($item['id'] == $new['id']) {
-                    $item = $new;
-                    break;
+        //генерируем уникальный id
+        $new['id'] = end($news)['id'] + 1;
+        $new['image'] = $file_name;
+        $news[] = $new;
+
+        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        File::put($GLOBALS['file'], $json);
+    }
+
+    //сохраняем новость
+    public static function updateNews($new)
+    {
+        $file_name = null;
+        //если был прикреплён файл
+        if (isset($new['image'])) {
+            $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
+            $file_name = File::name($path) . '.' . File::extension($path);
+        }
+
+        //ищем элемент с таким id и заменяем
+        $news = News::getNewsAll();
+        foreach ($news as &$item) {
+            if ($item['id'] == $new['id']) {
+                //если файл не прикреплён, то сохраним старый файл
+                if ($file_name === null) {
+                    $new['image'] = $item['image'];
+                } else {//если файл прикреплён, то удалим старый файл и присвоим новый
+                    if (isset($item['image'])) {
+                        $old_path = $GLOBALS['images-save-folder'] . $item['image'];
+                        Storage::delete($old_path);
+                    }
+                    $new['image'] = $file_name;
                 }
+                $item = $new;
+                break;
             }
         }
         $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
         File::put($GLOBALS['file'], $json);
     }
-
 
     //проверка есть ли ошибки в новости
     public static function thereIsError($new)
@@ -103,12 +130,17 @@ class News extends Model
     public static function deleteNews($id)
     {
         $news = News::getNewsAll();
+        //удалим файл
+        if (isset($news[$id]['image'])) {
+            $path = $GLOBALS['images-save-folder'] . $news[$id]['image'];
+            Storage::delete($path);
+        }
         unset($news[$id]);
         $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
         File::put($GLOBALS['file'], $json);
     }
 
-        public static function getFileName()
+    public static function getFileName()
     {
         return $GLOBALS['file'];
     }

@@ -11,7 +11,7 @@
 @endif
 
 @section('content')
-        <form class="mx-auto col-8" method="post" action={{ route('admin.news.update') }}>
+        <form class="mx-auto col-8" method="post" enctype="multipart/form-data" action={{ route('admin.news.update') }}>
             @csrf
             <input type="hidden" name="id" value="{{ $news_item['id'] }}">
             <div class="form-group">
@@ -42,8 +42,12 @@
             </div>
             <div class="form-group">
                 <label for="image">Изображение</label>
-                <img src="{{ $item['image'] ?? asset('storage/images/news-default.jpg') }}" class="img-fluid d-block w-75 mb-3" alt="">
-                <input type="file" class="form-control-file" id="image">
+                @if($news_item['image'])
+                    <img src="{{ asset($GLOBALS['img-folder'] . $news_item['image']) }}" class="img-fluid d-block w-75 mb-3" alt="">
+                @else
+                    <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block w-75 mb-3" alt="">
+                @endif
+                <input type="file" class="form-control-file" id="image" name="image">
             </div>
 
             <button type="submit" class="btn btn-lg btn-primary">Сохранить</button>

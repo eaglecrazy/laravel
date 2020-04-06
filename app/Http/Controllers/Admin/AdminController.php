@@ -84,7 +84,7 @@ class AdminController extends Controller
                 $alert = ['type' => 'danger', 'text' => 'Ошибка изменения новости.'];
             } else {
                 //перезапишем новость
-                News::saveNews($new, true);
+                News::updateNews($new);
                 $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
             }
         }

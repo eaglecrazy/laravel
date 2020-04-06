@@ -33,7 +33,11 @@
             <div class="pl-2 my-4">
                 <a href="{{ route('news.item', [ $categories[$item['category']]['link'], $id ]) }}">
                     <h2>{{ $item['title'] }}</h2>
-                    <img src="{{ $item['image'] ?? asset('storage/images/news-default.jpg') }}" class="img-fluid d-block my-3 w-50">
+                    @if($item['image'])
+                        <img src="{{ asset($GLOBALS['img-folder'] . $item['image']) }}" class="img-fluid d-block my-3 w-50">
+                    @else
+                        <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block my-3 w-50">
+                    @endif
                 </a>
                 <br>
             </div>
