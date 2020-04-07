@@ -5,13 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use File;
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Result;
 use Storage;
 
 //Для хранения путей (они используются ещё и во вьюхах) я использовал $GLOBALS,
 //чтобы не хранить в БД повторяющуюся информацию в каждой записи
 //Или такие вещи лучше в конфиге хранить?
 
-$GLOBALS['file'] = storage_path() . '/app/files/news.json';
+$GLOBALS['json-file'] = storage_path() . '/app/files/news.json';
 $GLOBALS['images-save-folder'] = 'public/images/';
 $GLOBALS['img-folder'] = 'storage/images/';
 
@@ -19,28 +20,25 @@ $GLOBALS['img-folder'] = 'storage/images/';
 class News extends Model
 {
 
+    //получение всех новостей
     public static function getNewsAll()
     {
         return DB::table('news')->get();
     }
 
+    //получение одной новости
     public static function getNewsItem($id)
     {
         $result = DB::table('news')->find($id);
-        if($result)
+        if ($result)
             return $result;
         return null;
     }
 
+    //получение новостей одной категории
     public static function getNewsByCategory($category)
     {
-        $result = [];
-        $news = static::getNewsAll();
-        foreach ($news as $news_item) {
-            if ($news_item->category == $category)
-                $result[] = $news_item;
-        }
-        return $result;
+        return DB::table('news')->where('category', $category)->get();
     }
 
 //ВАШ КОММЕНТАРИЙ "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
@@ -68,61 +66,44 @@ class News extends Model
         $file_name = null;
         if (isset($new['image'])) {
             $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
-            $file_name = File::name($path) . '.' . File::extension($path);
+            $new['image'] = File::name($path) . '.' . File::extension($path);
         }
 
-        $news = News::getNewsAll();
-        //генерируем уникальный id
-        $new['id'] = end($news)->id + 1;
-        $new['image'] = $file_name;
-        $news[] = $new;
-
-        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-        File::put($GLOBALS['file'], $json);
+        DB::table('news')->insert($new);
     }
 
-    //сохраняем новость
+    //обновляем новость
     public static function updateNews($new)
     {
-
-//todo поменять на БД
-        $file_name = null;
-        //если был прикреплён файл
+        //работаем с файлом
         if (isset($new['image'])) {
             $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
-            $file_name = File::name($path) . '.' . File::extension($path);
+            $new['image'] = File::name($path) . '.' . File::extension($path);
         }
 
-        //ищем элемент с таким id и заменяем
-        $news = News::getNewsAll();
-        foreach ($news as &$item) {
-            if ($item->id == $new['id']) {
-                //если файл не прикреплён, то сохраним старый файл
-                if ($file_name === null) {
-                    $new['image'] = $item->image;
-                } else {//если файл прикреплён, то удалим старый файл и присвоим новый
-                    if (isset($item->image)) {
-                        $old_path = $GLOBALS['images-save-folder'] . $item->image;
-                        Storage::delete($old_path);
-                    }
-                    $new['image'] = $file_name;
-                }
-                $item = $new;
-                break;
-            }
+        //получим  прошлый экземпляр новости
+        $old = DB::table('news')->find($new['id']);
+        if (!isset($new['image'])) {
+            $new['image'] = $old->image;
         }
-        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-        File::put($GLOBALS['file'], $json);
+
+        //установим время обновления
+        $new['updated_at'] = DB::raw('CURRENT_TIMESTAMP()');
+
+        //обновим новость
+        DB::table('news')->
+        where('id', $new['id'])->
+        update($new);
     }
 
     //проверка есть ли ошибки в новости
     public static function thereIsError($new)
     {
         //проверка существования ключей
-        if (!array_key_exists('title', $new) || !array_key_exists('category', $new) || !array_key_exists('content', $new))
+        if (!array_key_exists('title', $new) || !array_key_exists('category', $new) || !array_key_exists('text', $new))
             return true;
         //проверка на пустые значения
-        if ($new['title'] == '' || $new['category'] == '' || $new['content'] == '')
+        if ($new['title'] == '' || $new['category'] == '' || $new['text'] == '')
             return true;
         //проверка на существование в категориях $new['category']
         if (empty(Category::getCategoryNameById($new['category'])))
@@ -133,20 +114,20 @@ class News extends Model
     //удаление новости
     public static function deleteNews($id)
     {
-//todo поменять на БД
-        $news = News::getNewsAll();
         //удалим файл
-        if (isset($news[$id]->image)) {
-            $path = $GLOBALS['images-save-folder'] . $news[$id]->image;
+        $old = DB::table('news')->find($id);
+        if (isset($old->image)) {
+            $path = $GLOBALS['images-save-folder'] . $old->image;
             Storage::delete($path);
         }
-        unset($news[$id]);
-        $json = json_encode($news, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-        File::put($GLOBALS['file'], $json);
+        DB::table('news')->where('id', $id)->delete();
     }
 
     public static function getFileName()
     {
-        return $GLOBALS['file'];
+        $result = DB::table('news')->get();
+        $json = json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        File::put($GLOBALS['json-file'], $json);
+        return $GLOBALS['json-file'];
     }
 }

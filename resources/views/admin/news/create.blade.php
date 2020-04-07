@@ -26,17 +26,17 @@
                     {{ old('category') === null ? 'selected' : ''  }}
                 >Выберите категорию
                 </option>
-                @foreach($categories as $item)
+                @foreach($categories as $category_item)
                     <option
-                        value="{{ $item['id'] }}">{{ $item['name'] }}
-                        {{ old('category') === $item['name'] ? 'selected' : ''  }}
+                        value="{{ $category_item->id }}">{{ $category_item->name }}
+                        {{ old('category') === $category_item->name ? 'selected' : ''  }}
                     </option>
                 @endforeach
             </select>
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control" id="text" rows="15" name="content">{{ old('content') }}</textarea>
+            <textarea class="form-control" id="text" rows="15" name="text" required>{{ old('text') }}</textarea>
         </div>
         <div class="form-group">
             <label for="image">Изображение</label>

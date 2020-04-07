@@ -22,7 +22,6 @@ class Category extends Model
             $result[$category_item->id] = $category_item;
         }
         return $result;
-
     }
 
     public static function getCategoryNameById($id)

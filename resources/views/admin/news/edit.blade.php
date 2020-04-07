@@ -28,17 +28,17 @@
                     </option>
                     @foreach($categories as $category_item)
                         <option
-                            {{ $news_item->category == $category_item['id'] ? 'selected' : ''  }}
-                            value="{{ $category_item['id'] }}"
+                            {{ $news_item->category == $category_item->id ? 'selected' : ''  }}
+                            value="{{ $category_item->id }}"
                         >
-                            {{ $category_item['name'] }}
+                            {{ $category_item->name }}
                         </option>
                     @endforeach
                 </select>
             </div>
             <div class="form-group">
                 <label for="text">Текст новости</label>
-                <textarea class="form-control" id="text" rows="15" name="content">{{ $news_item->text }}</textarea>
+                <textarea class="form-control" id="text" rows="15" name="text">{{ $news_item->text }}</textarea>
             </div>
             <div class="form-group">
                 <label for="image">Изображение</label>
