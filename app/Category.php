@@ -9,7 +9,11 @@ class Category extends Model
 {
     public static function getCategoryIdByLink($link)
     {
-        return DB::table('categories')->where('link', $link)->first()->id;
+//        return DB::table('categories')->where('link', $link)->first()->id;
+        $category = DB::table('categories')->where('link', $link)->first();
+        if($category)
+            return $category->id;
+        return null;
     }
 
     public static function getCategoryAll()
