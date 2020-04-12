@@ -28,13 +28,13 @@ Route::group(
                 'as' => 'news.'
             ],
             function () {
-                Route::get('index', 'AdminController@news')->name('index');
-                Route::get('create', 'AdminController@newsCreate')->name('create');
-                Route::get('export', 'AdminController@newsExport')->name('export');
-                Route::match(['get', 'post'],'add', 'AdminController@newsAdd')->name('add');
-                Route::match(['get', 'post'],'update', 'AdminController@newsUpdate')->name('update');
-                Route::get('edit/{id}', 'AdminController@newsEdit')->name('edit');
-                Route::get('delete/{id}', 'AdminController@newsDelete')->name('delete');
+                Route::get('index', 'NewsController@index')->name('index');
+                Route::get('create', 'NewsController@create')->name('create');
+                Route::get('export', 'NewsController@export')->name('export');
+                Route::match(['get', 'post'],'add', 'NewsController@add')->name('add');
+                Route::match(['get', 'post'],'update/{news}', 'NewsController@update')->name('update');
+                Route::get('edit/{news}', 'NewsController@edit')->name('edit');
+                Route::get('delete/{news}', 'NewsController@delete')->name('delete');
             }
         );
 
@@ -69,18 +69,10 @@ Route::group(
         //этот роут специально сделал таким, чтобы ссылка была красивая
         //как например реальная ссылка домен-категория-новость
         //https://news.mail.ru/economics/41188789/
-        Route::get('/{category}/{id}', 'NewsController@showItem')->name('item');
+        Route::get('/{category}/{news}', 'NewsController@showItem')->name('item');
         Route::get('/{category}', 'NewsController@showCategory')->name('category');
     }
 );
-
-
-//оставил для примера
-//Route::get('/admin',
-//    [
-//        'uses' => 'Admin\AdminController@index',
-//        'as' => 'Admin'
-//    ]);
 
 
 Auth::routes();

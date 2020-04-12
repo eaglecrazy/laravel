@@ -3,14 +3,14 @@
     @include('header.header-user')
 @endsection
 
-@section('title', $item->title)
+@section('title', $news_item->title)
 
 @section('content')
-    <h1>{{ $item->title }}</h1>
-    @if($item->image)
-        <img src="{{ asset($GLOBALS['img-folder'] . $item->image) }}" class="img-fluid d-block my-3">
+    <h1>{{ $news_item->title }}</h1>
+    @if($news_item->image)
+        <img src="{{ asset($news_item::$img_folder . $news_item->image) }}" class="img-fluid d-block my-3">
     @else
-        <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block my-3">
+        <img src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}" class="img-fluid d-block my-3">
     @endif
-    <p>{{ $item->text }}</p>
+    <p>{{ $news_item->text }}</p>
 @endsection
