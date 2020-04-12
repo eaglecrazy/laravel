@@ -31,12 +31,14 @@
     <div class="col-10">
         @forelse ($news as $news_item)
             <div class="pl-2 my-4">
-                <a href="{{ route('news.item', [$categories[$news_item->category]->link, $news_item->id]) }}">
+                <a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}">
                     <h2>{{ $news_item->title }}</h2>
                     @if($news_item->image)
-                        <img src="{{ asset($GLOBALS['img-folder'] . $news_item->image) }}" class="img-fluid d-block my-3 w-50">
+                        <img src="{{ asset($news_item::$img_folder . $news_item->image) }}"
+                             class="img-fluid d-block my-3 w-50">
                     @else
-                        <img src="{{ asset($GLOBALS['img-folder'] . 'news-default.jpg') }}" class="img-fluid d-block my-3 w-50">
+                        <img src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}"
+                             class="img-fluid d-block my-3 w-50">
                     @endif
                 </a>
                 <br>
@@ -44,6 +46,8 @@
         @empty
             Новостей нет
         @endforelse
+
+        {{ $news->links() }}
     </div>
 
 @endsection

@@ -13,26 +13,21 @@
 @section('content')
         <form class="mx-auto col-8" method="post" enctype="multipart/form-data" action={{ route('admin.news.update') }}>
             @csrf
-            <input type="hidden" name="id" value="{{ $news_item->id }}">
+            <input type="hidden" name="id" value="{{ $news_item }}">
             <div class="form-group">
                 <label for="news-name">Название новости</label>
-                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" required value="{{ $news_item->title }}">
+                <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости" value="{{ $news_item->title }}">
             </div>
 
             <div class="form-group">
                 <label for="category">Категория</label>
-                <select class="form-control" id="category" name="category" required>
+                <select class="form-control" id="category" name="category">
                     <option disabled value=""
                         {{ $news_item->category === null ? 'selected' : ''  }}>
                         Выберите категорию
                     </option>
                     @foreach($categories as $category_item)
-                        <option
-                            {{ $news_item->category == $category_item->id ? 'selected' : ''  }}
-                            value="{{ $category_item->id }}"
-                        >
-                            {{ $category_item->name }}
-                        </option>
+                        <option {{ $news_item->category == $category_item->id ? 'selected' : '' }} value="{{ $category_item->id }}"> {{ $category_item->name }}</option>
                     @endforeach
                 </select>
             </div>

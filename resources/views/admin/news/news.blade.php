@@ -30,19 +30,20 @@
         <tbody>
         @foreach($news as $news_item)
             <tr>
-                <th scope="row">{{ $news_item->number }}</th>
+                <th scope="row">:((</th>
                 <td>{{ $news_item->title }}</td>
-                <td>{{ $categories[$news_item->category]->name }}</td>
-                <td><a href="{{ route('news.item', [$categories[$news_item->category]->link, $news_item->id ]) }}"
+                <td>{{ $categories[$news_item->category_id]->name }}</td>
+                <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}"
                        class="btn btn-success" role="button">Посмотреть</a></td>
-                <td><a href="{{ route('admin.news.edit', $news_item->id) }}" class="btn btn-primary"
+                <td><a href="{{ route('admin.news.edit', $news_item) }}" class="btn btn-primary"
                        role="button">Изменить</a></td>
-                <td><a href="{{ route('admin.news.delete', $news_item->id) }}" class="btn btn-danger"
+                <td><a href="{{ route('admin.news.delete', $news_item) }}" class="btn btn-danger"
                        role="button">Удалить</a></td>
             </tr>
         @endforeach
         </tbody>
     </table>
+    {{ $news->links() }}
 
 
 @endsection
