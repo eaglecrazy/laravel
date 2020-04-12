@@ -23,14 +23,21 @@ class CreateNewsTable extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->string('title')->comment('Заголовок новости');
             $table->text('text')->comment('Текст новости');
-            $table->bigInteger('category')->comment('ID категории');
+
+            $table->unsignedBigInteger('category_id')->comment('ID категории');
+
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories');
+
+
             $table->string('image')
                 ->nullable()
                 ->default(null)
                 ->comment('Картинка');
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
-//            $table->timestamps();
+//            $table->timestamp('created_at')->useCurrent();
+//            $table->timestamp('updated_at')->useCurrent();
+            $table->timestamps();
 
         });
     }
@@ -42,6 +49,7 @@ class CreateNewsTable extends Migration
      */
     public function down()
     {
+//        Schema::dropForeign(['categoty_id']);
         Schema::dropIfExists('news');
     }
 }

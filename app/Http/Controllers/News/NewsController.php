@@ -9,41 +9,57 @@ use App\News;
 
 class NewsController extends Controller
 {
+    private static $pagination = 30;
+
     public function showAll()
     {
-        $news = News::getNewsAll();
+        $news = News::paginate(static::$pagination);
+        $categories = Category::getAll();
+
         return view('news.news',
             [
                 'news' => $news,
-                'categories' => Category::getCategoryAll(),
+                'categories' => $categories,
                 'categoryName' => null,
             ]);
     }
 
-    public function showItem($category, $id)
+    public function showItem($category, News $news)
     {
-        $item = News::getNewsItem($id);
-
-        //если неправильный id то редирект
-        if($item === null)
-            return redirect()->route('news.all');
-
-        return view('news.news-item', ['id' => $id, 'item' => $item]);
+        return view('news.news-item', ['news_item' => $news]);
     }
 
     public function showCategory($category_link)
     {
-        $id = Category::getCategoryIdByLink($category_link);
+        $category = Category::where('link', $category_link)->get()->first();
 
-        //если неправильный id то редирект
-        if($id === null)
+        //если нет категории с таким линком то редирект
+        if($category === null)
             return redirect()->route('news.all');
+
+//ВОПРОС
+        //Запрос ниже возвращает объект
+        //Illuminate\Database\Eloquent\Builder
+        //и к нему можно применить метод paginate
+        $news = News::where('category_id', $category->id);
+        $news = $news->paginate(static::$pagination);
+
+        //Если использовать запрос по отношениям
+        //то getNews вернёт объект
+        //Illuminate\Database\Eloquent\Collection
+        //как сделать пейджинацию для него?
+        $temp_news = $category->getNews();
+
+        //категории
+        $categories = Category::getAll();
 
         return view('news.news',
             [
-                'news' => News::getNewsByCategory($id),
-                'categories' => Category::getCategoryAll(),
-                'categoryName' => Category::getCategoryNameById($id)
+                'news' => $news,
+                'categories' => $categories,
+                'categoryName' => $category->name
             ]);
     }
+
+
 }

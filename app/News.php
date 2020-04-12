@@ -3,131 +3,97 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use File;
-use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Result;
 use Storage;
-
-//Для хранения путей (они используются ещё и во вьюхах) я использовал $GLOBALS,
-//чтобы не хранить в БД повторяющуюся информацию в каждой записи
-//Или такие вещи лучше в конфиге хранить?
-
-$GLOBALS['json-file'] = storage_path() . '/app/files/news.json';
-$GLOBALS['images-save-folder'] = 'public/images/';
-$GLOBALS['img-folder'] = 'storage/images/';
+use File;
 
 
 class News extends Model
 {
+    static $img_folder = 'storage/images/';//используется во вьюхах
+    private static $images_save_folder = 'public/images/';
 
-    //получение всех новостей
-    public static function getNewsAll()
-    {
-        return DB::table('news')->get();
-    }
 
-    //получение одной новости
-    public static function getNewsItem($id)
-    {
-        $result = DB::table('news')->find($id);
-        if ($result)
-            return $result;
-        return null;
-    }
+    protected $fillable = ['title', 'text', 'category_id', 'image'];
 
-    //получение новостей одной категории
-    public static function getNewsByCategory($category)
-    {
-        return DB::table('news')->where('category', $category)->get();
-    }
 
-//ВАШ КОММЕНТАРИЙ "addNumeration вот что странно, зачем это, сразу нельзя что ли индексы хранить, лишнее это."
-//Это не индексы, а нумерация строк таблицы, используемая при во вьюхе. Новость с id=10 может быть на 7 строке.
-// Не нашёл как грамотно прямо во вьюхе сделать нумерацию без JS, поэтому и передаю с данными.
-
-    //добавляем нумерацию всем новостям
-    public static function addNumeration($news)
-    {
-        $n = 1;
-        foreach ($news as &$item) {
-            $item->number = $n++;
-        }
-        return $news;
-    }
-
-//ВАШ КОММЕНТАРИЙ. "Не понял логику в saveNews, вы что иногда и меняете новость, не только добавляете? Этого не было по заданию."
-//ОТВЕТ. Да, реализовал не только изменение и удаление новостей. Не по заданию, зато больше практики.
-// Перенёс изменение в отдельный метод.
-
-    //сохраняем новость
-    public static function saveNews($new)
-    {
-        //работаем с файлом
-        $file_name = null;
-        if (isset($new['image'])) {
-            $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
-            $new['image'] = File::name($path) . '.' . File::extension($path);
-        }
-
-        DB::table('news')->insert($new);
-    }
-
-    //обновляем новость
-    public static function updateNews($new)
+    //чтобы не писать в контроллере много кода сделал функции сохранения, изменения и удаления тут
+    public static function saveNew($new)
     {
         //работаем с файлом
         if (isset($new['image'])) {
-            $path = Storage::putFile($GLOBALS['images-save-folder'], $new['image']);
+            $path = Storage::putFile(static::$images_save_folder, $new['image']);
             $new['image'] = File::name($path) . '.' . File::extension($path);
         }
 
-        //получим  прошлый экземпляр новости
-        $old = DB::table('news')->find($new['id']);
+        $news = new News();
+        $news->fill($new)->save();
+    }
+
+
+    //чтобы не писать в контроллере много кода сделал функции сохранения, изменения и удаления тут
+    public static function updateNews($new, News $old)
+    {
+        //работаем с файлом
+        if (isset($new['image'])) {
+            $path = Storage::putFile(static::$images_save_folder, $new['image']);
+            $new['image'] = File::name($path) . '.' . File::extension($path);
+
+            //удалим старую фоточку
+            $old_path = static::$images_save_folder . $old->image;
+            Storage::delete($old_path);
+        } elseif(isset($new['temp-image'])) {//если новой фоточки не было, но был временный файл
+            $extension = File::extension($new['temp-image']);
+            $old_path = static::$images_save_folder  . '/temp-file.' . $extension;
+            $path = static::$img_folder . uniqid() . '.' . $extension;
+            Storage::move($old_path, $path);
+            $new['image'] = $path;
+        }
+
+
+        //заменим фото в новом экземпляре старым, если его не было
         if (!isset($new['image'])) {
-            $new['image'] = $old->image;
+                $new['image'] = $old->image;
         }
 
-        //установим время обновления
-        $new['updated_at'] = DB::raw('CURRENT_TIMESTAMP()');
-
-        //обновим новость
-        DB::table('news')->
-        where('id', $new['id'])->
-        update($new);
+        $old->fill($new)->save();
     }
 
-    //проверка есть ли ошибки в новости
-    public static function thereIsError($new)
+
+    //если не была пройдена валидация, то сохраним файл чтобы вывести его при отображении формы добавления/редактирования
+    public static function saveTempImage($new){
+        $path = Storage::putFile(static::$images_save_folder, $new['image']);
+        Storage::delete(static::$images_save_folder . '/temp-file.' . File::extension($path));
+        Storage::move($path, static::$images_save_folder . '/temp-file.' . File::extension($path));
+        return static::$img_folder . 'temp-file.' . File::extension($path);
+    }
+
+
+    //если не была пройдена валидация, то сохраним файл чтобы вывести его при отображении формы добавления/редактирования
+    public static function deleteNews($to_delete)
     {
-        //проверка существования ключей
-        if (!array_key_exists('title', $new) || !array_key_exists('category', $new) || !array_key_exists('text', $new))
-            return true;
-        //проверка на пустые значения
-        if ($new['title'] == '' || $new['category'] == '' || $new['text'] == '')
-            return true;
-        //проверка на существование в категориях $new['category']
-        if (empty(Category::getCategoryNameById($new['category'])))
+        //удалим файл
+        if (isset($to_delete->image)) {
+            $path = static::$images_save_folder . $to_delete->image;
+            Storage::delete($path);
+        }
+        $to_delete->delete();
+    }
+
+    //проверим на заполнение полей
+    //проверку сделал так как БД ругается, если не заполнить
+    //конечно, когда будем делать валидацию сделаю всё правильно
+    public static function thereIsError($new){
+        if(empty($new['title']) || empty($new['category_id']) || empty($new['text']))
             return true;
         return false;
     }
 
-    //удаление новости
-    public static function deleteNews($id)
-    {
-        //удалим файл
-        $old = DB::table('news')->find($id);
-        if (isset($old->image)) {
-            $path = $GLOBALS['images-save-folder'] . $old->image;
-            Storage::delete($path);
-        }
-        DB::table('news')->where('id', $id)->delete();
-    }
 
-    public static function getFileName()
-    {
-        $result = DB::table('news')->get();
-        $json = json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-        File::put($GLOBALS['json-file'], $json);
-        return $GLOBALS['json-file'];
+    //хотел применить данный метод, но это непроизводительно
+    //когда отображаются все новости, на каждую делается запрос в БД про категорию,
+    //вместо одного запроса, получается столько запросов, сколько новостей -1.
+    //но, вообще штука полезеная
+    public function getCategory(){
+        return $this->belongsTo(Category::class, 'category_id')->first();
     }
 }

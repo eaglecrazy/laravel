@@ -26,7 +26,7 @@ class News_seeder extends Seeder
             $data[] = [
                 'title' => $faker->country,
                 'text' => $faker->realText(rand(300, 500)),
-                'category' => rand(1, 3)
+                'category_id' => rand(1, 3)
             ];
         }
         return $data;
