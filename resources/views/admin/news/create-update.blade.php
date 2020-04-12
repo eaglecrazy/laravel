@@ -52,8 +52,10 @@
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control" id="text" rows="15" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+            <textarea class="form-control" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
         </div>
+        <div class="form-group">
+            <label for="image">Изображение</label>
             @if(session('temp_image')) <input type="hidden" name="temp-image" value="{{ session('temp_image') }}"> @endif
             <img class="img-fluid d-block w-75 mb-3" alt=""
                 @if(session('temp_image'))
@@ -66,8 +68,6 @@
                     @endif
                 @endif
             >
-            <div class="form-group">
-                <label for="image">Изображение</label>
                 <input name="image" type="file" class="form-control-file" id="image">
             </div>
         <button type="submit" class="btn btn-lg btn-primary ">{{ $edit ? 'Сохранить' : 'Отправить' }}</button>
