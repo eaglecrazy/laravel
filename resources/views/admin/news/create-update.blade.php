@@ -2,6 +2,9 @@
 @section('title')
     {{ $edit ? 'Изменение' : 'Добавление' }} новости
 @endsection
+@section('js')
+    @if($errors->count())<script src="{{ asset('js/errors.js') }}" defer></script>@endif
+@endsection
 
 @section('header')
     @include('header.header-admin')
@@ -14,19 +17,27 @@
 @endif
 
 @section('content')
+{{--ВОПРОС. Почему то к @dump не применяются стили и он выглядит как на картинке dump.png в этой же папке. --}}
+{{-- Это не критично, но @dump штука удобная и хотелось бы пользоваться ей по человечески :) --}}
+{{--    {{  dd($errors) }} работает нормально --}}
+{{--    @dump($errors)--}}
+{{--{{dd(old('title'))}}--}}
     <form class="mx-auto" method="post" enctype="multipart/form-data"
-          action= {{ $edit ? route('admin.news.update', $news_item) : route('admin.news.add') }}>
+          action= {{ $edit ? route('admin.news.update', $news_item) : route('admin.news.create') }}>
         @csrf
         @if($edit)<input type="hidden" name="id" value="{{ $news_item->id }}">@endif
         <div class="form-group">
             <label for="news-name">Название новости</label>
-            <input type="text" class="form-control" id="news-name" name="title" placeholder="Введите название новости"
-                   value="@if(old('title')){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif">
+            <input type="text" class="form-control {{ $errors->has('title') ? 'is-invalid' : '' }}" id="news-name" name="title" placeholder="Введите название новости" value="@if(old('title')){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif">
+            @if($errors->has('title'))
+                <div class="invalid-feedback">
+                    @foreach($errors->get('title') as $error) {{ $error }}@endforeach
+                </div>
+            @endif
         </div>
-
         <div class="form-group">
             <label for="category_id">Категория</label>
-            <select class="form-control" id="category" name="category_id">
+            <select class="form-control pr-5  {{ $errors->has('category_id') ? 'is-invalid' : '' }}" id="category" name="category_id">
                 <option disabled value=""
                 @if($edit)
                     {{ $news_item->category_id === null ? 'selected' : ''  }}
@@ -49,10 +60,20 @@
                     </option>
                 @endforeach
             </select>
+            @if($errors->has('category_id'))
+                <div class="invalid-feedback">
+                    @foreach($errors->get('category_id') as $error) {{ $error }}@endforeach
+                </div>
+            @endif
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+            <textarea class="form-control {{ $errors->has('text') ? 'is-invalid' : '' }}" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+            @if($errors->has('text'))
+                <div class="invalid-feedback">
+                    @foreach($errors->get('text') as $error) {{ $error }}@endforeach
+                </div>
+            @endif
         </div>
         <div class="form-group">
             <label for="image">Изображение</label>
@@ -68,9 +89,13 @@
                     @endif
                 @endif
             >
-                <input name="image" type="file" class="form-control-file" id="image">
+            <input name="image" type="file" class="form-control-file  {{ $errors->has('image') ? 'is-invalid' : '' }}" id="image">
+            @if($errors->has('image'))
+                <div class="invalid-feedback">
+                    @foreach($errors->get('image') as $error) {{ $error }}@endforeach
+                </div>
+            @endif
             </div>
         <button type="submit" class="btn btn-lg btn-primary ">{{ $edit ? 'Сохранить' : 'Отправить' }}</button>
     </form>
-
 @endsection

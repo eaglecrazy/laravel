@@ -29,10 +29,10 @@ Route::group(
             ],
             function () {
                 Route::get('index', 'NewsController@index')->name('index');
-                Route::get('create', 'NewsController@create')->name('create');
+                Route::get('add', 'NewsController@add')->name('add');
                 Route::get('export', 'NewsController@export')->name('export');
-                Route::match(['get', 'post'],'add', 'NewsController@add')->name('add');
-                Route::match(['get', 'post'],'update/{news}', 'NewsController@update')->name('update');
+                Route::post('create', 'NewsController@create')->name('create');
+                Route::post('update/{news}', 'NewsController@update')->name('update');
                 Route::get('edit/{news}', 'NewsController@edit')->name('edit');
                 Route::get('delete/{news}', 'NewsController@delete')->name('delete');
             }

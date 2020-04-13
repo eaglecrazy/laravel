@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\News;
 use App\Category;
+use Validator;
 
 class NewsController extends Controller
 {
@@ -27,40 +28,45 @@ class NewsController extends Controller
     }
 
     //страница создания новости
-    public function create()
+    public function add()
     {
         $categories = Category::getAll();
         return view('admin.news.create-update', ['categories' => $categories, 'edit' => false]);
     }
 
     //добавление новости
-    public function add(Request $request)
+    public function create(Request $request)
     {
-        $alert = null;
-        if ($request->isMethod('post')) {
-            //получим новость
-            $new = $request->only(['title', 'category_id', 'text', 'image', 'temp-image']);
+        //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
+        $new = $this->validateNews($request);
+        //если были ошибки валидации то вернётся RedirectResponse
+        if(is_object($new))
+            return $new;
 
-            if (News::thereIsError($new)) {
-                $request->flash();
-                $alert = ['type' => 'danger', 'text' => 'Ошибка добавления новости.'];
+        //сохраним файл с картинкой
+        $new = News::saveImage($new);
+        $news = new News();
+        $news->fill($new)->save();
 
-                //если меняли картинку
-                $temp_image = null;
-                if ($new['image'])
-                    $temp_image = News::saveTempImage($new);
-
-                return redirect()->route('admin.news.create')->with(['alert' => $alert, 'temp_image' => $temp_image]);
-            }
-
-            //теперь не работаю с объектом News внутри статики, но операции с файлами всё же делаю там
-            $new = News::saveImage($new);
-            $news = new News();
-            $news->fill($new)->save();
-
-            $alert = ['type' => 'success', 'text' => 'Новость успешно добавлена.'];
-        }
+        $alert = ['type' => 'success', 'text' => 'Новость успешно добавлена.'];
         return redirect()->route('admin.news.index')->with('alert', $alert);
+    }
+
+    //обновление новости
+    public function update(Request $request, News $news)
+    {
+        //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
+        $new = $this->validateNews($request);
+        //если были ошибки валидации то вернётся RedirectResponse
+        if(is_object($new))
+            return $new;
+        //обновим файл с картинкой
+        $new = News::updateImage($new, $news->image);
+
+        $news->fill($new)->save();
+        $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
+
+        return redirect()->route('admin.news.edit', $new['id'])->with(['alert' => $alert]);
     }
 
     //страница редактирования новости
@@ -68,39 +74,6 @@ class NewsController extends Controller
     {
         $categories = Category::getAll();
         return view('admin.news.create-update', ['news_item' => $news, 'categories' => $categories, 'edit' => true]);
-    }
-
-    //обновление новости
-    public function update(Request $request, News $news)
-    {
-        $alert = null;
-        $temp_image = null;
-
-        if ($request->isMethod('post')) {
-
-            //получим новость
-            $new = $request->only(['id', 'title', 'category_id', 'text', 'image', 'temp-image']);
-
-            //проверим на ошибки
-            //да, конечно валидацию потом переделаю как надо, но бд ругается если не заполнить поле
-            if (News::thereIsError($new)) {
-                $request->flash();
-                $alert = ['type' => 'danger', 'text' => 'Ошибка изменения новости.'];
-
-                //передаём временное фото
-                if (isset($new['image'])) {
-                    $temp_image = News::saveTempImage($new);
-                }
-
-            } else {
-                //обновим файл с картинкой
-                $new = News::updateImage($new, $news->image);
-
-                $news->fill($new)->save();
-                $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
-            }
-        }
-        return redirect()->route('admin.news.edit', $new['id'])->with(['alert' => $alert, 'temp_image' => $temp_image]);
     }
 
     //удаление новости
@@ -116,5 +89,33 @@ class NewsController extends Controller
     public function export()
     {
         return response()->download(News::getFileName());
+    }
+
+    //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
+    private function validateNews(Request $request){
+
+// Вместо того, чтобы сделать так:
+//        $new = $this->validate($request, News::rules(), [], News::fieldNames());
+// решил использовать Validator::make так можно более гибкий ответ отправить на страницу
+// в случае ошибки. В данном случае в форме остаётся фоточка, если она была прошла валидацию.
+// Конечно теперь не одна строчка, но фреймворк сделал именно то, что я от него хочу! :))
+
+        $new = $request->only(['id', 'title', 'category_id', 'text', 'image', 'temp-image']);
+
+        $validator = Validator::make($new, News::rules(), [], News::fieldNames());
+        if($validator->fails()){
+            //если раньше был временный файл то передадим в форму его
+            $temp_image = (isset($new['temp-image'])) ? $new['temp-image'] : null;
+            //если был приложен какой то файл и он прошёл валидацию, то сохраним его как временный и передадим в форму
+            if (isset($new['image']) && !$validator->errors()->has('image'))
+                $temp_image = News::saveTempImage($new);
+            $alert = ['type' => 'danger', 'text' => 'Ошибка добавления новости.'];
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors($validator->errors())
+                ->with(['alert' => $alert, 'temp_image' => $temp_image]);
+        }
+        return $new;
     }
 }
