@@ -115,8 +115,8 @@ class News extends Model
         $tableNameCategory = (new Category())->getTable();
 
         return [
-            'title' => 'required|min:10|max:255',
-            'text' => 'required|min:10|max:65535',
+            'title' => 'required|min:2|max:255',
+            'text' => 'required|min:2|max:65535',
             'category_id' => "required|exists:$tableNameCategory,id",
             'image' => 'mimes:jpeg,bmp,png|max:1000'
         ];
