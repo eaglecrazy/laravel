@@ -9,39 +9,13 @@ use App\Category;
 
 class NewsController extends Controller
 {
-    private static $pagination = 15;
-
-
     //страница управления новостями
     public function index()
     {
-        $news = News::paginate(static::$pagination);
-
-//
-// ВОПРОС
-// Как мне пронумеровать во вьюхе "admin/news/news.blade.php" новости (первый столбец в таблице)?
-// Сейчас можно использовать id, но в реальном проекте они могут идти не подряд.
-// Можно сделать из коллекции массив и дополнить его, но наверняка можно сделать используя коллекцию.
-// Я пытался трансформировать коллекцию и добавлять туда номера. Но после изменения все элементы коллекции равны null.
-// Возможно это защита какая то.
-//
-// Если так делать неправильно, то как правильно? Может есть возможность сделать это во вьюхе?
-// Подскажите, пожалуйста, лучший способ. Пока оставлю без нумерации.
-//
-//        $GLOBALS['num'] = 1;
-//        $news_collection = $news->getCollection();
-//        $news_collection->transform(function ($news_item, $key){
-//            $news_item->number = $GLOBALS['num']++;
-//            dd($news_item); //тут элемент коллекции меняется
-//        });
-//        dd($news_collection);
-//        /*  #items: array:5 [▼
-//                0 => null
-//                1 => null
-//                2 => null
-//                3 => null
-//                4 => null
-//        ]*/
+        //можно конечно и так
+        //$news = News::query()->paginate(5);
+        //но так проще, мне кажется, во всяком случае результат один
+        $news = News::paginate(20);
 
         $categories = Category::getAll();
 
@@ -79,8 +53,10 @@ class NewsController extends Controller
                 return redirect()->route('admin.news.create')->with(['alert' => $alert, 'temp_image' => $temp_image]);
             }
 
-            //сохраним новость, чтобы не засорять контроллер сделал всё в модели
-            News::saveNew($new);
+            //теперь не работаю с объектом News внутри статики, но операции с файлами всё же делаю там
+            $new = News::saveImage($new);
+            $news = new News();
+            $news->fill($new)->save();
 
             $alert = ['type' => 'success', 'text' => 'Новость успешно добавлена.'];
         }
@@ -111,20 +87,16 @@ class NewsController extends Controller
                 $request->flash();
                 $alert = ['type' => 'danger', 'text' => 'Ошибка изменения новости.'];
 
-
-    //ВОПРОС
-    //С файлами хелпер old не работает. Хочу чтобы загруженное фото в случае неудачной
-    //валидации сохранялось, сейчас реализовал это так (почти работает, нужно немного доделать).
-    // Есть ли лучший способ?
-
                 //передаём временное фото
                 if (isset($new['image'])) {
                     $temp_image = News::saveTempImage($new);
                 }
 
             } else {
-                //перезапишем новость
-                News::updateNews($new, $news);
+                //обновим файл с картинкой
+                $new = News::updateImage($new, $news->image);
+
+                $news->fill($new)->save();
                 $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
             }
         }
@@ -134,7 +106,8 @@ class NewsController extends Controller
     //удаление новости
     public function delete(News $news)
     {
-        News::deleteNews($news);
+        News::deleteImage($news->image);
+        $news->delete();
         $alert = ['type' => 'info', 'text' => 'Новость удалена.'];
         return redirect()->route('admin.news.index')->with('alert', $alert);
     }

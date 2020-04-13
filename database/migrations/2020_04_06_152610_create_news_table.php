@@ -4,6 +4,8 @@
 //php artisan migrate
 //php artisan migrate:rollback
 //php artisan migrate --seed
+//php artisan migrate:fresh --seed
+
 
 
 use Illuminate\Support\Facades\Schema;
@@ -49,7 +51,6 @@ class CreateNewsTable extends Migration
      */
     public function down()
     {
-//        Schema::dropForeign(['categoty_id']);
         Schema::dropIfExists('news');
     }
 }

@@ -9,12 +9,10 @@ use File;
 
 class News extends Model
 {
-    static $img_folder = 'storage/images/';//используется во вьюхах
-    private static $images_save_folder = 'public/images/';
-
-
     protected $fillable = ['title', 'text', 'category_id', 'image'];
 
+    static $img_folder = 'storage/images/';//используется во вьюхах
+    private static $images_save_folder = 'public/images/';
 
     //копируем файл в хранилище и возвращаем путь
     private static function copyImageToStorage($image){
@@ -36,8 +34,8 @@ class News extends Model
         return $file_name;
     }
 
-    //чтобы не писать в контроллере много кода сделал функции сохранения, изменения и удаления тут
-    public static function saveNew($new)
+    //сохраняем файл с картинкой
+    public static function saveImage($new)
     {
         //работаем с файлом
         if (isset($new['image']))
@@ -45,22 +43,18 @@ class News extends Model
         //если новой фоточки не было, но был временный файл
         elseif(isset($new['temp-image']))
             $new['image'] = static::moveAndRenameTempImage($new['temp-image']);
-
-
-        $news = new News();
-        $news->fill($new)->save();
+        return $new;
     }
 
-
-    //чтобы не писать в контроллере много кода сделал функции сохранения, изменения и удаления тут
-    public static function updateNews($new, News $old)
+    //обновляем файл с картинкой
+    public static function updateImage($new, $old_image)
     {
         //работаем с файлом
         if (isset($new['image'])) {
             //скопируем в хранилище
             $new['image'] = static::copyImageToStorage($new['image']);
             //удалим старую фоточку
-            $old_path = static::$images_save_folder . $old->image;
+            $old_path = static::$images_save_folder . $old_image;
             Storage::delete($old_path);
 
         //если новой фоточки не было, но был временный файл
@@ -69,15 +63,12 @@ class News extends Model
         }
 
         //заменим фото в новом экземпляре старым, если оно не менялось
-        if (!isset($new['image'])) {
-                $new['image'] = $old->image;
-        }
-
-        $old->fill($new)->save();
+        if (!isset($new['image']))
+                $new['image'] = $old_image;
+        return $new;
     }
 
-
-    //если не была пройдена валидация, то сохраним файл чтобы вывести его при отображении формы добавления/редактирования
+    //сохраняем временный файл с картинкой, возвращаем путь к нему
     public static function saveTempImage($new){
         $path = Storage::putFile(static::$images_save_folder, $new['image']);
         //удалим и переименуем, чтобы на сервере не скапливались ненужные файлы
@@ -86,16 +77,13 @@ class News extends Model
         return static::$img_folder . 'temp-file.' . File::extension($path);
     }
 
-
-    //если не была пройдена валидация, то сохраним файл чтобы вывести его при отображении формы добавления/редактирования
-    public static function deleteNews($to_delete)
+    //удаляем файл с картинкой
+    public static function deleteImage($to_delete)
     {
-        //удалим файл
-        if (isset($to_delete->image)) {
+        if (isset($to_delete)) {
             $path = static::$images_save_folder . $to_delete->image;
             Storage::delete($path);
         }
-        $to_delete->delete();
     }
 
     //проверим на заполнение полей

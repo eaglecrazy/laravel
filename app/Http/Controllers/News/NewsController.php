@@ -37,20 +37,7 @@ class NewsController extends Controller
         if($category === null)
             return redirect()->route('news.all');
 
-//ВОПРОС
-        //Запрос ниже возвращает объект
-        //Illuminate\Database\Eloquent\Builder
-        //и к нему можно применить метод paginate
-        $news = News::where('category_id', $category->id);
-        $news = $news->paginate(static::$pagination);
-
-        //Если использовать запрос по отношениям
-        //то getNews вернёт объект
-        //Illuminate\Database\Eloquent\Collection
-        //как сделать пейджинацию для него?
-        $temp_news = $category->getNews();
-
-        //категории
+        $news = $category->getNews()->paginate(2);
         $categories = Category::getAll();
 
         return view('news.news',

@@ -28,9 +28,11 @@
         </tr>
         </thead>
         <tbody>
+
+        @php $number = ($news->currentPage()-1) * $news->perPage() + 1; @endphp
         @foreach($news as $news_item)
             <tr>
-                <th scope="row">:((</th>
+                <th scope="row">{{ $number++ }}</th>
                 <td>{{ $news_item->title }}</td>
                 <td>{{ $categories[$news_item->category_id]->name }}</td>
                 <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}"
