@@ -84,19 +84,9 @@ class News extends Model
     public static function deleteImage($to_delete)
     {
         if (isset($to_delete)) {
-            $path = static::$images_save_folder . $to_delete->image;
+            $path = static::$images_save_folder . $to_delete;
             Storage::delete($path);
         }
-    }
-
-    //проверим на заполнение полей
-    //проверку сделал так как БД ругается, если не заполнить
-    //конечно, когда будем делать валидацию сделаю всё правильно
-    public static function thereIsError($new)
-    {
-        if (empty($new['title']) || empty($new['category_id']) || empty($new['text']))
-            return true;
-        return false;
     }
 
 

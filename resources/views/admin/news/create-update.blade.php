@@ -21,10 +21,10 @@
 {{-- Это не критично, но @dump штука удобная и хотелось бы пользоваться ей по человечески :) --}}
 {{--    {{  dd($errors) }} работает нормально --}}
 {{--    @dump($errors)--}}
-{{--{{dd(old('title'))}}--}}
-    <form class="mx-auto" method="post" enctype="multipart/form-data"
-          action= {{ $edit ? route('admin.news.update', $news_item) : route('admin.news.create') }}>
+
+    <form class="mx-auto" method="post" enctype="multipart/form-data" action= {{ $edit ? route('admin.news.update', $news_item) : route('admin.news.store') }}>
         @csrf
+        @if($edit) @method('put') @endif
         @if($edit)<input type="hidden" name="id" value="{{ $news_item->id }}">@endif
         <div class="form-group">
             <label for="news-name">Название новости</label>

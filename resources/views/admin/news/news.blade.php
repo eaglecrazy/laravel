@@ -13,7 +13,7 @@
 @section('content')
 
     <h1>Управление новостями</h1>
-    <a href="{{ route('admin.news.add') }}" class="btn btn-primary btn-lg mb-3 mr-2" role="button">Добавить
+    <a href="{{ route('admin.news.create') }}" class="btn btn-primary btn-lg mb-3 mr-2" role="button">Добавить
         новость</a>
     <a href="{{ route('admin.news.export') }}" class="btn btn-primary btn-lg mb-3" role="button">Экспорт новостей</a>
     <table class="table table-striped table-hover">
@@ -35,12 +35,17 @@
                 <th scope="row">{{ $number++ }}</th>
                 <td>{{ $news_item->title }}</td>
                 <td>{{ $categories[$news_item->category_id]->name }}</td>
-                <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}"
-                       class="btn btn-success" role="button">Посмотреть</a></td>
-                <td><a href="{{ route('admin.news.edit', $news_item) }}" class="btn btn-primary"
-                       role="button">Изменить</a></td>
-                <td><a href="{{ route('admin.news.delete', $news_item) }}" class="btn btn-danger"
-                       role="button">Удалить</a></td>
+                <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}" class="btn btn-success" role="button">Посмотреть</a></td>
+                <td><a href="{{ route('admin.news.edit', $news_item) }}" class="btn btn-primary" role="button">Изменить</a></td>
+{{--                <td><a href="{{ route('admin.news.destroy', $news_item) }}" class="btn btn-danger" role="button">Удалить</a></td>--}}
+                <td>
+
+                    <form action="{{ route('admin.news.destroy', $news_item) }}" method="post" enctype="multipart/form-data">
+                        @method('delete')
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </td>
             </tr>
         @endforeach
         </tbody>

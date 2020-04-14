@@ -27,22 +27,22 @@ class AddNewsTest extends DuskTestCase
     {
         //ошибка добавления новости
         $this->browse(function (Browser $browser) {
-            $browser->visit('/admin/news/add')
+            $browser->visit('/admin/news/create')
                 ->assertSee('Название новости')
                 ->type('title', 'title')
                 ->press('Отправить')
-                ->assertPathIs('//admin/news/add')
+                ->assertPathIs('//admin/news/create')
                 ->assertSee('Ошибка добавления новости.');
         });
 
         //корректное добавление новости
         $this->browse(function (Browser $browser) {
-            $browser->visit('/admin/news/add')
+            $browser->visit('/admin/news/create')
                 ->type('title', 'Новая новость')
                 ->type('text', 'Текст новой новости.')
                 ->select('category_id', '1')
                 ->press('Отправить')
-                ->assertPathIs('/admin/news/index')
+                ->assertPathIs('/admin/news')
                 ->assertSee('Новость успешно добавлена.');
         });
     }

@@ -31,14 +31,14 @@ class NewsController extends Controller
     }
 
     //страница создания новости
-    public function add()
+    public function create()
     {
         $categories = Category::getAll();
         return view('admin.news.create-update', ['categories' => $categories, 'edit' => false]);
     }
 
     //добавление новости
-    public function create(Request $request)
+    public function store(Request $request)
     {
         //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
         $new = $this->validateNews($request);
@@ -80,7 +80,7 @@ class NewsController extends Controller
     }
 
     //удаление новости
-    public function delete(News $news)
+    public function destroy(News $news)
     {
         News::deleteImage($news->image);
         $news->delete();

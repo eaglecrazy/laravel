@@ -20,23 +20,8 @@ Route::group(
     ],
     function () {
         Route::get('/', 'AdminController@index')->name('index');
-
-        //админ - новости
-        Route::group(
-            [
-                'prefix' => 'news',
-                'as' => 'news.'
-            ],
-            function () {
-                Route::get('index', 'NewsController@index')->name('index');
-                Route::get('add', 'NewsController@add')->name('add');
-                Route::get('export', 'NewsController@export')->name('export');
-                Route::post('create', 'NewsController@create')->name('create');
-                Route::post('update/{news}', 'NewsController@update')->name('update');
-                Route::get('edit/{news}', 'NewsController@edit')->name('edit');
-                Route::get('delete/{news}', 'NewsController@delete')->name('delete');
-            }
-        );
+        Route::resource('news', 'NewsController', ['except' => ['show']]);
+        Route::get('/news/export', 'NewsController@export')->name('news.export');
 
         //админ - пользователи
         Route::group(
