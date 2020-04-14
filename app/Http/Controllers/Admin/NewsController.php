@@ -8,6 +8,9 @@ use App\News;
 use App\Category;
 use Validator;
 
+use Excel;
+use App\Exports\NewsExport;
+
 class NewsController extends Controller
 {
     //страница управления новостями
@@ -88,7 +91,7 @@ class NewsController extends Controller
     //экспорт новостей
     public function export()
     {
-        return response()->download(News::getFileName());
+        return Excel::download(new NewsExport, 'news.xlsx');
     }
 
     //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
