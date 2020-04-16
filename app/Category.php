@@ -11,6 +11,7 @@ class Category extends Model
     }
 
     public function getNews(){
-        return $this->hasMany(News::class, 'category_id', 'id')->getResults();
+//        return $this->hasMany(News::class, 'category_id', 'id')->getResults();
+        return $this->hasMany(News::class, 'category_id', 'id');
     }
 }

@@ -17,13 +17,13 @@ class MyFeatureTests extends TestCase
         $response->assertStatus(200);
         $response->assertSeeText('Админка');
 
-        $response = $this->get('admin/news/create');
+        $response = $this->get('admin/news/add');
         $response->assertStatus(200);
         $response->assertSeeText('Название новости');
 
-        $response = $this->get('admin/news/export');
-        $response->assertStatus(200);
-        $response->assertHeader('content-type', 'application/json');
+//        $response = $this->get('admin/news/export');
+//        $response->assertStatus(200);
+//        $response->assertHeader('content-type', 'application/json');
 
         $response = $this->get('admin/users/index');
         $response->assertStatus(200);
@@ -40,7 +40,7 @@ class MyFeatureTests extends TestCase
 
         $response = $this->get('news/games/1');
         $response->assertStatus(200);
-        $response->assertSeeText('Удивительный стакан');
+
 
 
     }

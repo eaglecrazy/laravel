@@ -28,17 +28,24 @@
         </tr>
         </thead>
         <tbody>
+
+        @php $number = ($news->currentPage()-1) * $news->perPage() + 1; @endphp
         @foreach($news as $news_item)
             <tr>
-                <th scope="row">:((</th>
+                <th scope="row">{{ $number++ }}</th>
                 <td>{{ $news_item->title }}</td>
                 <td>{{ $categories[$news_item->category_id]->name }}</td>
-                <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}"
-                       class="btn btn-success" role="button">Посмотреть</a></td>
-                <td><a href="{{ route('admin.news.edit', $news_item) }}" class="btn btn-primary"
-                       role="button">Изменить</a></td>
-                <td><a href="{{ route('admin.news.delete', $news_item) }}" class="btn btn-danger"
-                       role="button">Удалить</a></td>
+                <td><a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}" class="btn btn-success" role="button">Посмотреть</a></td>
+                <td><a href="{{ route('admin.news.edit', $news_item) }}" class="btn btn-primary" role="button">Изменить</a></td>
+{{--                <td><a href="{{ route('admin.news.destroy', $news_item) }}" class="btn btn-danger" role="button">Удалить</a></td>--}}
+                <td>
+
+                    <form action="{{ route('admin.news.destroy', $news_item) }}" method="post" enctype="multipart/form-data">
+                        @method('delete')
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </td>
             </tr>
         @endforeach
         </tbody>

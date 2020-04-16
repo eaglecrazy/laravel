@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\News;
 
 //php artisan make:seeder news_seeder
 //php artisan db:seed --class=News_seeder (если возникает ошибка, то на сервере "composer dump-autoload)
@@ -15,9 +16,11 @@ class News_seeder extends Seeder
      */
     public function run()
     {
-        DB::table('news')->insert($this->getData());
+//        DB::table('news')->insert($this->getData());
+        factory(News::class, 10)->create();
     }
 
+    //этот метод не нужен при использовании фабрики
     private function getData(): array
     {
         $faker = Faker\Factory::create('ru_RU');
