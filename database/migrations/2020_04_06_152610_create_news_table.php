@@ -28,11 +28,6 @@ class CreateNewsTable extends Migration
 
             $table->unsignedBigInteger('category_id')->comment('ID категории');
 
-            $table->foreign('category_id')
-                ->references('id')
-                ->on('categories');
-
-
             $table->string('image')
                 ->nullable()
                 ->default(null)
@@ -40,9 +35,10 @@ class CreateNewsTable extends Migration
 //            $table->timestamp('created_at')->useCurrent();
 //            $table->timestamp('updated_at')->useCurrent();
             $table->timestamps();
-
         });
     }
+
+
 
     /**
      * Reverse the migrations.

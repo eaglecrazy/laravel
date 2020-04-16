@@ -59,8 +59,16 @@ class NewsController extends Controller
     public function update(Request $request, News $news)
     {
         //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
-        $new = $this->validateNews($request);
         //если были ошибки валидации то вернётся RedirectResponse
+        $new = $this->validateNews($request);
+
+//ВАШ КОММЕНТАРИЙ: return $new; не понял назначение, если ошибки и так будет редирект.
+//ОТВЕТ: редиректа автоматически не будет, так как я не использую
+//$this->validate($request, News::rules(), [], News::fieldNames());
+//в методе validateNews выше используется Validator::make
+//если в нём были ошибки, то возвращается объект RedirectResponse
+//а если ошибок не было, то возвращается массив new с которым можно работать дальше
+//оформил в виде метода так как этот код используется в двух местах контроллера
         if(is_object($new))
             return $new;
         //обновим файл с картинкой
@@ -69,7 +77,7 @@ class NewsController extends Controller
         $news->fill($new)->save();
         $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
 
-        return redirect()->route('admin.news.edit', $new['id'])->with(['alert' => $alert]);
+        return redirect()->route('admin.news.index', $new['id'])->with(['alert' => $alert]);
     }
 
     //страница редактирования новости

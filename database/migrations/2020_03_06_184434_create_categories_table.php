@@ -24,6 +24,9 @@ class CreateCategoriesTable extends Migration
 //            $table->timestamp('updated_at')->useCurrent();
             $table->timestamps();
         });
+
+        //если сразу нужен сидинг, для проведения теста
+        //(new Category_seeder())->run();
     }
 
     /**

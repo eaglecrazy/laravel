@@ -3,6 +3,17 @@
 
 Route::get('/', 'HomeController@index')->name('Home');
 
+/*
+|--------------------------------------------------------------------------
+| User
+|--------------------------------------------------------------------------
+|
+| Контроллер пользователя
+|
+*/
+Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show']]);
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +27,15 @@ Route::group(
     [
         'prefix' => 'admin',
         'namespace' => 'Admin',
-        'as' => 'admin.'
+        'as' => 'admin.',
+        'middleware' => 'auth'
+
     ],
     function () {
         Route::get('/', 'AdminController@index')->name('index');
         Route::resource('news', 'NewsController', ['except' => ['show']]);
         Route::get('/news/export', 'NewsController@export')->name('news.export');
-
+        Route::get('/news/{some}', function (){ abort(404); });
         //админ - пользователи
         Route::group(
             [
@@ -62,3 +75,9 @@ Route::group(
 
 Auth::routes();
 //Route::get('/home', 'HomeController@index')->name('home');
+
+//Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+//Route::post('login', 'Auth\LoginController@login');
+//Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+
+
