@@ -32,7 +32,6 @@ Route::group(
 
     ],
     function () {
-        Route::get('/', 'AdminController@index')->name('index');
         Route::resource('news', 'NewsController', ['except' => ['show']]);
         Route::get('/news/export', 'NewsController@export')->name('news.export');
         Route::get('/news/{some}', function (){ abort(404); });

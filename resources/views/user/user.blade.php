@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Главная страница')
+@section('title', 'Профиль')
 
 @section('header')
-    @include ('header.header-user')
+    @include ('header.header')
 @endsection
 
 @section('content')

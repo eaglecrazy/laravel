@@ -7,7 +7,7 @@
 @endsection
 
 @section('header')
-    @include('header.header-admin')
+    @include ('header.header')
 @endsection
 
 @if(session('alert'))
@@ -28,16 +28,16 @@
         @if($edit)<input type="hidden" name="id" value="{{ $news_item->id }}">@endif
         <div class="form-group">
             <label for="news-name">Название новости</label>
-            <input type="text" class="form-control {{ $errors->has('title') ? 'is-invalid' : '' }}" id="news-name" name="title" placeholder="Введите название новости" value="@if(old('title')){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif">
-            @if($errors->has('title'))
+            <input type="text" class="form-control @error('title') is-invalid @enderror" id="news-name" name="title" placeholder="Введите название новости" value="@if(old('title')){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif" autofocus>
+            @error('title')
                 <div class="invalid-feedback">
                     @foreach($errors->get('title') as $error) {{ $error }}@endforeach
                 </div>
-            @endif
+            @enderror
         </div>
         <div class="form-group">
             <label for="category_id">Категория</label>
-            <select class="form-control pr-5  {{ $errors->has('category_id') ? 'is-invalid' : '' }}" id="category" name="category_id">
+            <select class="form-control pr-5 @error('category_id') is-invalid @enderror" id="category" name="category_id">
                 <option disabled value=""
                 @if($edit)
                     {{ $news_item->category_id === null ? 'selected' : ''  }}
@@ -60,20 +60,20 @@
                     </option>
                 @endforeach
             </select>
-            @if($errors->has('category_id'))
+            @error('category_id')
                 <div class="invalid-feedback">
                     @foreach($errors->get('category_id') as $error) {{ $error }}@endforeach
                 </div>
-            @endif
+            @enderror
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control {{ $errors->has('text') ? 'is-invalid' : '' }}" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
-            @if($errors->has('text'))
+            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+            @error('text')
                 <div class="invalid-feedback">
                     @foreach($errors->get('text') as $error) {{ $error }}@endforeach
                 </div>
-            @endif
+            @enderror
         </div>
         <div class="form-group">
             <label for="image">Изображение</label>
@@ -89,12 +89,12 @@
                     @endif
                 @endif
             >
-            <input name="image" type="file" class="form-control-file  {{ $errors->has('image') ? 'is-invalid' : '' }}" id="image">
-            @if($errors->has('image'))
+            <input name="image" type="file" class="form-control-file  @error('image') is-invalid @enderror" id="image">
+            @error('image')
                 <div class="invalid-feedback">
                     @foreach($errors->get('image') as $error) {{ $error }}@endforeach
                 </div>
-            @endif
+            @enderror
             </div>
         <button type="submit" class="btn btn-lg btn-primary ">{{ $edit ? 'Сохранить' : 'Отправить' }}</button>
     </form>

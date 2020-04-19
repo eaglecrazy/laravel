@@ -17,12 +17,12 @@ use Faker\Generator as Faker;
 */
 
 $factory->define(User::class, function (Faker $faker) {
-    $faker = Faker\Factory::create('ru_RU');
-    return [
+        return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
-        'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-        'remember_token' => Str::random(10),
+        'password' => '$2y$10$h5OMZOeAnyEFU3xbnjC3pu.dMZ0hYcI2QF8NmW1CCoWIdgTfaAwg2', // password
+        'remember_token' => null,
+        'role' => 0
     ];
 });

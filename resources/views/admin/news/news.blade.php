@@ -1,7 +1,7 @@
 @extends('layouts.main')
 @section('title', 'Управление новостями')
 @section('header')
-    @include('header.header-admin')
+    @include ('header.header')
 @endsection
 
 @if(session('alert'))

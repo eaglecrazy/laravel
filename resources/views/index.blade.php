@@ -3,7 +3,7 @@
 @section('title', 'Главная страница')
 
 @section('header')
-    @include ('header.header-user')
+    @include ('header.header')
 @endsection
 
 @section('content')

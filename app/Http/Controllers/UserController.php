@@ -57,7 +57,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        dd('edit');
+        return view('user.edit', ['user' => $user]);
     }
 
     /**
@@ -69,6 +69,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->validate($request, News::rules(), [], News::fieldNames());
+
         dd('update');
     }
 
