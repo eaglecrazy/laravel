@@ -21,26 +21,25 @@
                     <a class="nav-link" href="{{ route('Home', null, false) }}">Главная</a>
                 </li>
 
-                <li class="nav-item {{ (request()->routeIs('news.all') || request()->routeIs('news.category')) ? 'active' : '' }}">
+                <li class="nav-item @if(preg_match("/^news./", request()->route()->getName())) active @endif">
                     <a class="nav-link" href="{{ route('news.all', null, false) }}">Новости</a>
                 </li>
 
                 @if(Auth::user() && Auth::user()->role)
-                    <li class="nav-item btn-group {{ request()->routeIs('Home') ? 'admin.index' : '' }}">
+                    <li class="nav-item btn-group @if(preg_match("/^admin./", request()->route()->getName())) active @endif ">
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Админка</a>
                         <ul class="dropdown-menu">
-                            <li class="nav-item {{ request()->routeIs(['admin.news.index', 'admin.news.create', 'admin.news.edit']) ? 'active' : '' }}">
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.news.index', null, false) }}">Новости</a>
                             </li>
-                            <li class="nav-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
-                                <a class="nav-link"
-                                   href="{{ route('admin.users.index', null, false) }}">Пользователи</a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.users', null, false) }}">Пользователи</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.news.export', null, false) }}">Экспорт новостей</a>
                             </li>
                         </ul>
                     </li>
-
-
-
                 @endif
             </ul>
 

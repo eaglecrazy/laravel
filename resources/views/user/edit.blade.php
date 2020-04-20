@@ -6,7 +6,14 @@
     @include ('header.header')
 @endsection
 
+@if(session('alert'))
+    @section('alert')
+        @include('alert')
+    @endsection
+@endif
+
 @section('content')
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -48,14 +55,31 @@
                                     @enderror
                                 </div>
                             </div>
+{{--                        никто не может поменять свои данные без пароля --}}
+{{--                        но админы могут менять чужие данные без ввода пароля--}}
+                            @if (Auth::id() === $user->id)
+                                <div class="form-group row">
+                                    <label for="current-password" class="col-md-4 col-form-label text-md-right">Старый пароль</label>
 
+                                    <div class="col-md-6">
+                                        <input id="current-password" type="password"
+                                               class="form-control @error('current-password') is-invalid @enderror" name="current-password" placeholder="заполнить обязательно">
+
+                                        @error('current-password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            @endif
                             <div class="form-group row">
                                 <label for="password" class="col-md-4 col-form-label text-md-right">Пароль</label>
 
                                 <div class="col-md-6">
                                     <input id="password" type="password"
                                            class="form-control @error('password') is-invalid @enderror" name="password"
-                                           autocomplete="new-password">
+                                           autocomplete="new-password" placeholder="можно не заполнять">
 
                                     @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -70,16 +94,15 @@
                                     пароль</label>
 
                                 <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control"
-                                           name="password_confirmation" autocomplete="new-password">
+                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="можно не заполнять">
                                 </div>
                             </div>
 
                             @if(Auth::user()->role)
                                 <div class="form-group row">
                                     <label for="user-role" class="col-md-4 col-form-label text-md-right">Администратор</label>
-                                    <div class="col-md-1">
-                                        <input id="user-role" type="checkbox" class="form-control" name="user-role" @if(true) checked @endif>
+                                    <div class="col-md-6">
+                                        <input id="user-role" type="checkbox" class="form-control" name="user-role" @if($user->role) checked @endif @if (Auth::user()->role && Auth::id() === $user->id) disabled @endif>
                                     </div>
                                 </div>
                             @endif

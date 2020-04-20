@@ -16,9 +16,7 @@ class NewsController extends Controller
     //страница управления новостями
     public function index()
     {
-        //можно конечно и так
-        //$news = News::query()->paginate(5);
-        //но так проще, мне кажется, во всяком случае результат один
+        //$news = News::query()->paginate(20);
         $news = News::paginate(20);
 
         $categories = Category::getAll();

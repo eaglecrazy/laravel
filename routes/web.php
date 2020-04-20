@@ -1,5 +1,6 @@
 <?php
 
+Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('Home');
 
@@ -11,7 +12,8 @@ Route::get('/', 'HomeController@index')->name('Home');
 | Контроллер пользователя
 |
 */
-Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show']]);
+Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show', 'destroy']])
+    -> middleware('auth');
 
 
 
@@ -28,23 +30,16 @@ Route::group(
         'prefix' => 'admin',
         'namespace' => 'Admin',
         'as' => 'admin.',
-        'middleware' => 'auth'
-
+        'middleware' => ['auth', 'is_admin']
     ],
     function () {
         Route::resource('news', 'NewsController', ['except' => ['show']]);
+
+        //"ЭКСПОРТ ПРОПАЛ
+
         Route::get('/news/export', 'NewsController@export')->name('news.export');
         Route::get('/news/{some}', function (){ abort(404); });
-        //админ - пользователи
-        Route::group(
-            [
-                'prefix' => 'users',
-                'as' => 'users.'
-            ],
-            function () {
-                Route::get('index', 'AdminController@users')->name('index');
-            }
-        );
+        Route::get('/users', 'AdminController@showUsers')->name('users');
     });
 
 /*
@@ -72,11 +67,6 @@ Route::group(
 );
 
 
-Auth::routes();
-//Route::get('/home', 'HomeController@index')->name('home');
 
-//Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
-//Route::post('login', 'Auth\LoginController@login');
-//Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 

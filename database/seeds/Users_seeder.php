@@ -23,7 +23,7 @@ class Users_seeder extends Seeder
             'name' => 'admin',
             'email' => 'ad@ad.ru',
             'email_verified_at' => now(),
-            'password' => '$2y$10$h5OMZOeAnyEFU3xbnjC3pu.dMZ0hYcI2QF8NmW1CCoWIdgTfaAwg2', // password
+            'password' => Hash::make('123'),
             'remember_token' => null,
             'role' => 1
         ];
@@ -35,7 +35,7 @@ class Users_seeder extends Seeder
             'name' => 'user',
             'email' => 'us@us.ru',
             'email_verified_at' => now(),
-            'password' => '$2y$10$h5OMZOeAnyEFU3xbnjC3pu.dMZ0hYcI2QF8NmW1CCoWIdgTfaAwg2', // password
+            'password' => Hash::make('123'),
             'remember_token' => null,
             'role' => 0
         ];
