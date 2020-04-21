@@ -13,7 +13,8 @@ Route::get('/', 'HomeController@index')->name('Home');
 |
 */
 Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show', 'destroy']])
-    -> middleware('auth');
+    -> middleware(['auth', 'user_update_validation']);
+
 
 
 

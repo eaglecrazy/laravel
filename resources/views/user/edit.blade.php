@@ -24,6 +24,7 @@
                         <form method="POST" action="{{ route('user.update', $user) }}">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="id" value="{{ $user->id }}">
                             <div class="form-group row">
                                 <label for="name" class="col-md-4 col-form-label text-md-right">Имя</label>
 
@@ -102,7 +103,7 @@
                                 <div class="form-group row">
                                     <label for="user-role" class="col-md-4 col-form-label text-md-right">Администратор</label>
                                     <div class="col-md-6">
-                                        <input id="user-role" type="checkbox" class="form-control" name="user-role" @if($user->role) checked @endif @if (Auth::user()->role && Auth::id() === $user->id) disabled @endif>
+                                        <input id="user-role" type="checkbox" class="form-control" name="user-role" @if($user->role || old('user-role') === 'on') checked @endif @if (Auth::user()->role && Auth::id() === $user->id) disabled @endif >
                                     </div>
                                 </div>
                             @endif

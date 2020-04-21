@@ -163,7 +163,7 @@ return [
     'attributes' => [
         'name'                  => 'Имя',
         'username'              => 'Никнейм',
-        'email'                 => 'E-Mail адрес',
+        'email'                 => 'E-Mail',
         'first_name'            => 'Имя',
         'last_name'             => 'Фамилия',
         'password'              => 'Пароль',
