@@ -36,6 +36,9 @@
                                 <a class="nav-link" href="{{ route('admin.users', null, false) }}">Пользователи</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.news.import', null, false) }}">Импорт новостей</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.news.export', null, false) }}">Экспорт новостей</a>
                             </li>
                         </ul>

@@ -31,7 +31,7 @@
                                 <div class="col-md-6">
                                     <input id="name" type="text"
                                            class="form-control @error('name') is-invalid @enderror" name="name"
-                                           value="{{ old('name') ?? $user->name  }}" autocomplete="name">
+                                           value="{{ old() ? old('name') : $user->name }}" autocomplete="name">
 
                                     @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -47,7 +47,7 @@
                                 <div class="col-md-6">
                                     <input id="email" type="email"
                                            class="form-control @error('email') is-invalid @enderror" name="email"
-                                           value="{{ old('email') ?? $user->email }}" autocomplete="email">
+                                           value="{{ old() ? old('email') : $user->email }}" autocomplete="email">
 
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">

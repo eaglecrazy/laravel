@@ -35,9 +35,7 @@ Route::group(
     ],
     function () {
         Route::resource('news', 'NewsController', ['except' => ['show']]);
-
-        //"ЭКСПОРТ ПРОПАЛ
-
+        Route::get('/news/import', 'ParserController@import')->name('news.import');
         Route::get('/news/export', 'NewsController@export')->name('news.export');
         Route::get('/news/{some}', function (){ abort(404); });
         Route::get('/users', 'AdminController@showUsers')->name('users');

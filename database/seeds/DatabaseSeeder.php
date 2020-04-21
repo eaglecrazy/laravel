@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
 //    если сидер не находится, то сделать composer dump-autoload
     public function run()
     {
-        $this->call(Category_seeder::class);
-        $this->call(News_seeder::class);
+//        $this->call(Category_seeder::class);
+//        $this->call(News_seeder::class);
         $this->call(Users_seeder::class);
     }
 }

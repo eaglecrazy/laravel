@@ -35,10 +35,10 @@
                     <h2>{{ $news_item->title }}</h2>
                     @if($news_item->image)
                         <img src="{{ asset($news_item::$img_folder . $news_item->image) }}"
-                             class="img-fluid d-block my-3 w-50">
+                             class="img-fluid d-block my-3 w-25">
                     @else
                         <img src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}"
-                             class="img-fluid d-block my-3 w-50">
+                             class="img-fluid d-block my-3 w-25">
                     @endif
                 </a>
                 <br>

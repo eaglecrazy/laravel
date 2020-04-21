@@ -28,7 +28,7 @@
         @if($edit)<input type="hidden" name="id" value="{{ $news_item->id }}">@endif
         <div class="form-group">
             <label for="news-name">Название новости</label>
-            <input type="text" class="form-control @error('title') is-invalid @enderror" id="news-name" name="title" placeholder="Введите название новости" value="@if(old('title')){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif" autofocus>
+            <input type="text" class="form-control @error('title') is-invalid @enderror" id="news-name" name="title" placeholder="Введите название новости" value="@if(old()){{ old('title') }}@elseif($edit){{ $news_item->title }}@endif" autofocus>
             @error('title')
                 <div class="invalid-feedback">
                     @foreach($errors->get('title') as $error) {{ $error }}@endforeach
@@ -68,7 +68,13 @@
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old('text')){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old()){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+{{--        ВОПРОС            --}}
+{{--        Я попытался сделать как было показано на уроке, чтобы не появлялся текст, если его удалить полностью, и нажать сохранить.     --}}
+{{--        Следующая строчка: --}}
+{{--        <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if($news_item->id) {{ old('text') }} @else {{ old('text') ?? $news_item->text ?? '' }} @endif</textarea>--}}
+{{--        В итоге при открытии редактирования поле пусто, не понимаю, почему на уроке у вас всё работало.      --}}
+{{--        Сделал по другому, но всё равно непонятно.      --}}
             @error('text')
                 <div class="invalid-feedback">
                     @foreach($errors->get('text') as $error) {{ $error }}@endforeach
