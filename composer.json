@@ -15,7 +15,8 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.8",
         "maatwebsite/excel": "^3.1",
-        "orchestra/parser": "3.8"
+        "orchestra/parser": "3.8",
+        "socialiteproviders/vkontakte": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",

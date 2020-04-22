@@ -1,8 +1,22 @@
 <?php
 
-Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('Home');
+
+/*
+|--------------------------------------------------------------------------
+| Авторизация
+|--------------------------------------------------------------------------
+|
+| Контроллер пользователя
+|
+*/
+Auth::routes();
+Route::get('/auth/vk', 'SocialLoginController@loginVK')
+    ->name('loginvk')
+    ->middleware('not_auth');
+Route::get('/auth/vk/response', 'SocialLoginController@responseVK')->name('respovsevk');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +28,7 @@ Route::get('/', 'HomeController@index')->name('Home');
 */
 Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show', 'destroy']])
     -> middleware(['auth', 'user_update_validation']);
+
 
 
 
