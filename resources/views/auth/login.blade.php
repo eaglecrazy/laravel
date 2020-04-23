@@ -3,7 +3,11 @@
 @section('header')
     @include('header.header')
 @endsection
-
+@if(session('alert'))
+@section('alert')
+    @include('alert')
+@endsection
+@endif
 @section('content')
     <div class="container">
         <div class="row justify-content-center">

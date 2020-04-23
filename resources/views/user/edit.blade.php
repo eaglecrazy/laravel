@@ -59,7 +59,7 @@
 {{--                        никто не может поменять свои данные без пароля --}}
 {{--                        но админы могут менять чужие данные без ввода пароля--}}
                             @if (Auth::id() === $user->id)
-                                <div class="form-group row">
+                                <div class="form-group row" @if($user->password === '') hidden @endif>
                                     <label for="current-password" class="col-md-4 col-form-label text-md-right">Старый пароль</label>
 
                                     <div class="col-md-6">

@@ -53,12 +53,14 @@ class UserController extends Controller
         if (Auth::user()->role && (Auth::id() !== $user->id)) {
             $access = true;
         }
-        //если кто-то меняет свои данные
-        elseif (Hash::check($request->post('current-password'), $user->password)) {
+
+
+        //если кто-то меняет свои данные (текущий пароль может быть пустым при авторизации через соцсети)
+        elseif (($user->password === '') || (Hash::check($request->post('current-password'), $user->password))) {
             $access = true;
         }
         else{
-            $alert = ['type' => 'danger', 'text' => 'Данные не изменены. Неправильный пароль'];
+            $alert = ['type' => 'danger', 'text' => 'Данные не изменены. Неправильный старый пароль'];
             $access = false;
         }
         //проверка совпадения паролей
@@ -91,10 +93,6 @@ class UserController extends Controller
         }
 
         return redirect()->route('user.edit', $user)->with('alert', $alert);
-
-//        $this->validate($request, News::rules(), [], News::fieldNames());
-//        dd('update');
-//        'password' => ,
     }
 
     /**

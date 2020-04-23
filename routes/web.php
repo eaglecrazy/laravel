@@ -15,7 +15,19 @@ Auth::routes();
 Route::get('/auth/vk', 'SocialLoginController@loginVK')
     ->name('loginvk')
     ->middleware('not_auth');
-Route::get('/auth/vk/response', 'SocialLoginController@responseVK')->name('respovsevk');
+
+//        ВОПРОС
+//        Я запретил доступ в посреднике для зарегистрированых пользователей, к этому роуту,
+//        но к нему должен быть доступ незарегистрированного.
+//        Но если зайти на него по ссылке http://laravel.local/auth/vk/response
+//        то сайт падает. Я сделал проерку на исключение InvalidStateException в контроллере,
+//        но оно почему то не отлавливается.
+//        Как сделать правильно? Как заставить это всё работать?
+
+Route::get('/auth/vk/response', 'SocialLoginController@responseVK')
+    ->name('respovsevk')
+    ->middleware('not_auth');
+
 
 
 /*

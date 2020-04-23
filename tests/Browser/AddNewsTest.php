@@ -27,9 +27,6 @@ class AddNewsTest extends DuskTestCase
 
     public function testFormAdd()
     {
-//ВОПРОС А  почему сидер не работает в этом файле?
-        //(new Category_seeder())->run();
-
         //ошибка добавления новости
         $this->browse(function (Browser $browser) {
             $browser->visit('/admin/news/create')
