@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 //use Orchestra\Parser\Xml\Facade as XmlParser;
+use Illuminate\Support\Str;
 use SimpleXMLElement;
 
 
@@ -23,9 +24,9 @@ class ParserController extends Controller
         $news = $this->getChannelNews($news, 'computers');
         $news = $this->getChannelNews($news, 'games');
         $categories = $this->getCategories($news);
-        $this->seedCategories($categories);
+        $this->addCategoriesToDB($categories);
         $news = $this->setCategories($news);
-        $this->seedNews($news);
+        $this->addNewsToDB($news);
         $alert = ['type' => 'success', 'text' => 'Импорт успешно завершён.'];
         return redirect()->route('news.all')->with(['alert' => $alert]);
     }
@@ -51,12 +52,10 @@ class ParserController extends Controller
     }
 
     //заливка новостей в БД
-    private function seedNews($news)
+    private function addNewsToDB($news)
     {
         foreach ($news as $news_item) {
-            $new = new News();
-            $new->fill($news_item);
-            $new->save();
+            News::firstOrCreate($news_item);
         }
     }
 
@@ -68,14 +67,10 @@ class ParserController extends Controller
     }
 
     //заливка категорий в БД
-    private function seedCategories($categories)
+    private function addCategoriesToDB($categories)
     {
         foreach ($categories as $categories_item) {
-            if(Category::query()->where('name', $categories_item['name'])->first())
-                continue;
-            $newCategory = new Category();
-            $newCategory->fill($categories_item);
-            $newCategory->save();
+            Category::firstOrCreate($categories_item);
         }
     }
 
@@ -90,32 +85,10 @@ class ParserController extends Controller
         $categories = [];
         foreach ($categorieNames as $categorieNames_item) {
                 $newCategory['name'] = $categorieNames_item;
-                $newCategory['link'] = $this->translit_sef($categorieNames_item);
+                $newCategory['link'] = Str::slug($categorieNames_item);
                 $categories[] = $newCategory;
         }
         return $categories;
-    }
-
-    //генерация ЧПУ для категорий
-    private function translit_sef($value)
-    {
-        $converter = array(
-            'а' => 'a',    'б' => 'b',    'в' => 'v',    'г' => 'g',    'д' => 'd',
-            'е' => 'e',    'ё' => 'e',    'ж' => 'zh',   'з' => 'z',    'и' => 'i',
-            'й' => 'y',    'к' => 'k',    'л' => 'l',    'м' => 'm',    'н' => 'n',
-            'о' => 'o',    'п' => 'p',    'р' => 'r',    'с' => 's',    'т' => 't',
-            'у' => 'u',    'ф' => 'f',    'х' => 'h',    'ц' => 'c',    'ч' => 'ch',
-            'ш' => 'sh',   'щ' => 'sch',  'ь' => '',     'ы' => 'y',    'ъ' => '',
-            'э' => 'e',    'ю' => 'yu',   'я' => 'ya',
-        );
-
-        $value = mb_strtolower($value);
-        $value = strtr($value, $converter);
-        $value = mb_ereg_replace('[^-0-9a-z]', '-', $value);
-        $value = mb_ereg_replace('[-]+', '-', $value);
-        $value = trim($value, '-');
-
-        return $value;
     }
 }
 

@@ -10,7 +10,6 @@
 
 
 @section('content')
-
     <div>
         <h2>Разделы</h2>
         @foreach ($categories as $category_item)
