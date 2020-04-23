@@ -18,12 +18,15 @@ class CreateCategoriesTable extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
-            $table->string('name')->comment('Название категории');
-            $table->string('link')->comment('Ссылка на категорию');
+            $table->string('name')->unique()->comment('Название категории');
+            $table->string('link')->unique()->comment('Ссылка на категорию');
 //            $table->timestamp('created_at')->useCurrent();
 //            $table->timestamp('updated_at')->useCurrent();
             $table->timestamps();
         });
+
+        //если сразу нужен сидинг, для проведения теста
+        //(new Category_seeder())->run();
     }
 
     /**

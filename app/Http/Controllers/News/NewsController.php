@@ -31,11 +31,7 @@ class NewsController extends Controller
 
     public function showCategory($category_link)
     {
-        $category = Category::where('link', $category_link)->get()->first();
-
-        //если нет категории с таким линком то редирект
-        if($category === null)
-            return redirect()->route('news.all');
+        $category = Category::query()->where('link', $category_link)->firstOrFail();
 
         $news = $category->getNews()->paginate(2);
         $categories = Category::getAll();
@@ -47,6 +43,4 @@ class NewsController extends Controller
                 'categoryName' => $category->name
             ]);
     }
-
-
 }

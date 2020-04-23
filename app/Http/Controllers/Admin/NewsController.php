@@ -16,9 +16,7 @@ class NewsController extends Controller
     //страница управления новостями
     public function index()
     {
-        //можно конечно и так
-        //$news = News::query()->paginate(5);
-        //но так проще, мне кажется, во всяком случае результат один
+        //$news = News::query()->paginate(20);
         $news = News::paginate(20);
 
         $categories = Category::getAll();
@@ -41,7 +39,7 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
-        $new = $this->validateNews($request);
+        $new = $this->validateNews($request, false);
         //если были ошибки валидации то вернётся RedirectResponse
         if(is_object($new))
             return $new;
@@ -59,8 +57,16 @@ class NewsController extends Controller
     public function update(Request $request, News $news)
     {
         //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
-        $new = $this->validateNews($request);
         //если были ошибки валидации то вернётся RedirectResponse
+        $new = $this->validateNews($request, true);
+
+//ВАШ КОММЕНТАРИЙ: return $new; не понял назначение, если ошибки и так будет редирект.
+//ОТВЕТ: редиректа автоматически не будет, так как я не использую
+//$this->validate($request, News::rules(), [], News::fieldNames());
+//в методе validateNews выше используется Validator::make
+//если в нём были ошибки, то возвращается объект RedirectResponse
+//а если ошибок не было, то возвращается массив new с которым можно работать дальше
+//оформил в виде метода так как этот код используется в двух местах контроллера
         if(is_object($new))
             return $new;
         //обновим файл с картинкой
@@ -69,7 +75,7 @@ class NewsController extends Controller
         $news->fill($new)->save();
         $alert = ['type' => 'success', 'text' => 'Новость успешно отредактирована.'];
 
-        return redirect()->route('admin.news.edit', $new['id'])->with(['alert' => $alert]);
+        return redirect()->route('admin.news.index', $new['id'])->with(['alert' => $alert]);
     }
 
     //страница редактирования новости
@@ -94,8 +100,10 @@ class NewsController extends Controller
         return Excel::download(new NewsExport, 'news.xlsx');
     }
 
+
+
     //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
-    private function validateNews(Request $request){
+    private function validateNews(Request $request, bool $isEdit){
 
 // Вместо того, чтобы сделать так:
 //        $new = $this->validate($request, News::rules(), [], News::fieldNames());
@@ -112,7 +120,8 @@ class NewsController extends Controller
             //если был приложен какой то файл и он прошёл валидацию, то сохраним его как временный и передадим в форму
             if (isset($new['image']) && !$validator->errors()->has('image'))
                 $temp_image = News::saveTempImage($new);
-            $alert = ['type' => 'danger', 'text' => 'Ошибка добавления новости.'];
+            $verb = $isEdit ? 'изменения' : 'добавления';
+            $alert = ['type' => 'danger', 'text' => "Ошибка $verb новости."];
             return redirect()
                 ->back()
                 ->withInput()

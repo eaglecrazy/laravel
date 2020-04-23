@@ -2,10 +2,12 @@
 
 namespace Tests\Browser;
 
+use Category_seeder;
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+
 
 class AddNewsTest extends DuskTestCase
 {
@@ -21,7 +23,7 @@ class AddNewsTest extends DuskTestCase
 //    Точнее протестировать можно, но будут показываться ошибки, так как БД пустая.
 //    Поэтому тесты запускал через PHPstorm c обычной БД.
 
-//    use RefreshDatabase;
+    use RefreshDatabase;
 
     public function testFormAdd()
     {
