@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'github' => [
+        'client_id' =>env('GITHUB_KEY'),
+        'client_secret' =>env('GITHUB_SECRET'),
+        'redirect' =>env('GITHUB_URI')
+    ],
+
     'vkontakte' => [
         'client_id' =>env('VKONTAKTE_KEY'),
         'client_secret' =>env('VKONTAKTE_SECRET'),

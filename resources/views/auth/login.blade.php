@@ -83,8 +83,12 @@
                         </form>
                     </div>
                     <div class="text-center card-footer">
-                        <a href="{{ route('loginvk') }}" class="btn btn-primary btn-lg mb-2 mt-2 text-center" role="button">Авторизация через
+                        <a href="{{ route('auth.login', 'vkontakte') }}" class="btn btn-primary btn-lg mb-2 mt-2 text-center"
+                           role="button">Авторизация через
                             "В контакте"</a>
+                        <a href="{{ route('auth.login', 'github') }}" class="btn btn-primary btn-lg mb-2 mt-2 text-center"
+                           role="button">Авторизация через
+                            "Github"</a>
                     </div>
                 </div>
             </div>

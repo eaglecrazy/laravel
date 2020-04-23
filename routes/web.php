@@ -12,9 +12,15 @@ Route::get('/', 'HomeController@index')->name('Home');
 |
 */
 Auth::routes();
-Route::get('/auth/vk', 'SocialLoginController@loginVK')
-    ->name('loginvk')
-    ->middleware('not_auth');
+
+Route::group([
+    'prefix' => 'auth',
+    'as' => 'auth.',
+    'middleware' => 'not_auth'
+], function () {
+    Route::get('/{social}', 'SocialLoginController@login')->name('login');
+    Route::get('/{social}/response', 'SocialLoginController@response');
+});
 
 //        ВОПРОС
 //        Я запретил доступ в посреднике для зарегистрированых пользователей, к этому роуту,
@@ -23,11 +29,6 @@ Route::get('/auth/vk', 'SocialLoginController@loginVK')
 //        то сайт падает. Я сделал проерку на исключение InvalidStateException в контроллере,
 //        но оно почему то не отлавливается.
 //        Как сделать правильно? Как заставить это всё работать?
-
-Route::get('/auth/vk/response', 'SocialLoginController@responseVK')
-    ->name('respovsevk')
-    ->middleware('not_auth');
-
 
 
 /*
@@ -39,10 +40,7 @@ Route::get('/auth/vk/response', 'SocialLoginController@responseVK')
 |
 */
 Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show', 'destroy']])
-    -> middleware(['auth', 'user_update_validation']);
-
-
-
+    ->middleware(['auth', 'user_update_validation']);
 
 
 /*
@@ -64,7 +62,9 @@ Route::group(
         Route::resource('news', 'NewsController', ['except' => ['show']]);
         Route::get('/news/import', 'ParserController@import')->name('news.import');
         Route::get('/news/export', 'NewsController@export')->name('news.export');
-        Route::get('/news/{some}', function (){ abort(404); });
+        Route::get('/news/{some}', function () {
+            abort(404);
+        });
         Route::get('/users', 'AdminController@showUsers')->name('users');
     });
 

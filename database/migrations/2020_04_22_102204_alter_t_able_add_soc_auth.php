@@ -17,7 +17,7 @@ class AlterTAbleAddSocAuth extends Migration
             $table->string('social_id', 20)
                 ->default('')
                 ->comment('ID "В контакте"');
-            $table->enum('type_auth', ['site', 'vk', 'github'])
+            $table->enum('type_auth', ['site', 'vkontakte', 'github'])
                 ->default('site')
                 ->comment('Тип авторизации');
             $table->string('avatar', 150)
