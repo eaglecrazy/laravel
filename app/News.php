@@ -9,7 +9,7 @@ use File;
 
 class News extends Model
 {
-    protected $fillable = ['title', 'text', 'category_id', 'image'];
+    protected $fillable = ['title', 'text', 'category_id', 'image', 'link', 'date'];
 
     static $img_folder = 'storage/images/';//используется во вьюхах
     private static $images_save_folder = 'public/images/';

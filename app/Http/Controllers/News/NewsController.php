@@ -9,11 +9,9 @@ use App\News;
 
 class NewsController extends Controller
 {
-    private static $pagination = 30;
-
     public function showAll()
     {
-        $news = News::paginate(static::$pagination);
+        $news = News::orderBy('created_at', 'desc')->paginate(30);
         $categories = Category::getAll();
 
         return view('news.news',
@@ -33,7 +31,7 @@ class NewsController extends Controller
     {
         $category = Category::query()->where('link', $category_link)->firstOrFail();
 
-        $news = $category->getNews()->paginate(2);
+        $news = $category->getNews()->orderBy('created_at', 'desc')->paginate(30);
         $categories = Category::getAll();
 
         return view('news.news',

@@ -18,9 +18,8 @@ class SocialLoginController extends Controller
     {
         try {
             $user = Socialite::driver($social)->user();
-
-        } catch (InvalidStateException $exception) {
-            dd($exception);
+        } catch (\Exception $exception) {
+            abort(404);
         }
 
         $user = $userAdaptor->getUserBySocId($user, $social);

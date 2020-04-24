@@ -7,9 +7,9 @@ use App\News;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-//use Orchestra\Parser\Xml\Facade as XmlParser;
+use Orchestra\Parser\Xml\Facade as XmlParser;
 use Illuminate\Support\Str;
-use SimpleXMLElement;
+//use SimpleXMLElement;
 
 
 class ParserController extends Controller
@@ -17,38 +17,13 @@ class ParserController extends Controller
     //импорт новостей
     public function import()
     {
-        $news = [];
-        $news = $this->getChannelNews($news, 'internet');
-        $news = $this->getChannelNews($news, 'cyber_sport');
-        $news = $this->getChannelNews($news, 'music');
-        $news = $this->getChannelNews($news, 'computers');
-        $news = $this->getChannelNews($news, 'games');
+        $news = $this->getNews();
         $categories = $this->getCategories($news);
         $this->addCategoriesToDB($categories);
         $news = $this->setCategories($news);
         $this->addNewsToDB($news);
         $alert = ['type' => 'success', 'text' => 'Импорт успешно завершён.'];
         return redirect()->route('news.all')->with(['alert' => $alert]);
-    }
-
-    // Парсить RSS c помощью XML парсера это как забивать гвозди рубанком! Я не нашёл ни одной
-    // ленты, которая бы полностью парсилась XML парсером. :(
-    // Наверняка есть специальные классы под это дело, а если без них то нормально парсить можно только регулярками.
-    // В документации к Orchestra\Parser\Xml\Facade не нашёл как
-    // перебрать все элементы, поэтому использовал нормальный парсер.
-    private function getChannelNews($old_news, $channel)
-    {
-        $xml = new SimpleXMLElement(file_get_contents("https://news.yandex.ru/$channel.rss"));
-        $category = str_replace('Яндекс.Новости: ', '', $xml->channel->title);
-        $news = [];
-        foreach ($xml->channel->item as $item) {
-            $news_item['title'] = $item->title->__toString();
-            $news_item['category_id'] = $category;
-            $news_item['text'] = $item->description->__toString();
-//            $news_item['link'] = $item->link->__toString();
-            $news[] = $news_item;
-        }
-        return array_merge($old_news, $news);
     }
 
     //заливка новостей в БД
@@ -75,7 +50,7 @@ class ParserController extends Controller
     }
 
     //генерация массива категорий для бд
-    private function getCategories(array $news)
+    private function getCategories($news)
     {
         $categorieNames = [];
         foreach ($news as $news_item) {
@@ -90,7 +65,39 @@ class ParserController extends Controller
         }
         return $categories;
     }
+
+
+
+
+// Вот с этим у меня была большая  проблема. "enclosure::url", без "::url" элемент enclosure парсится как null.
+// Лучше такие вещи показывать.
+// А ещё я не понял, как спарсить массив сразу, спасибо, что на уроке показали пример. :)
+    private function getNews()
+    {
+        $xml = XmlParser::load('https://lenta.ru/rss/news');
+        $data = $xml->parse(
+            [
+                'news' => ['uses' => 'channel.item[title,link,description,pubDate,enclosure::url,category]']
+            ]);
+        $news = [];
+        foreach ($data['news'] as $data_item){
+            $news_item['title'] = $data_item['title'];
+            $news_item['text'] = strip_tags(trim($data_item['description']));
+            $news_item['category_id'] = $data_item['category'];
+            $news_item['image'] = $data_item['enclosure::url'];
+            $news_item['link'] = $data_item['link'];
+            $news_item['date'] = (new \DateTime($data_item['pubDate']))->format('d.m.Y H:i:s');
+            if(
+                empty($news_item['title']) ||
+                empty($news_item['text'])||
+                empty($news_item['category_id'])||
+                empty($news_item['image'])||
+                empty($news_item['link'])||
+                empty($news_item['date'])
+            )
+                continue;
+            $news[] = $news_item;
+        }
+        return $news;
+    }
 }
-
-
-

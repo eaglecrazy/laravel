@@ -8,6 +8,9 @@
     {{ $categoryName ?? 'Новости'}}
 @endsection
 
+@section('css')
+    <link href="{{ asset('/css/news.css') }}" rel="stylesheet">
+@endsection
 
 @section('content')
     <div>
@@ -27,14 +30,14 @@
         <h1>Новости раздела {{ $categoryName }}</h1>
     @endif
 
-    <div class="col-10">
+    <div class="col-12">
         @forelse ($news as $news_item)
-            <div class="pl-2 my-4">
+            <div class="p-3 news-hover mx-auto rounded news-hover">
                 <a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}">
                     <h2>{{ $news_item->title }}</h2>
                     @if($news_item->image)
-                        <img src="{{ asset($news_item::$img_folder . $news_item->image) }}"
-                             class="img-fluid d-block my-3 w-25">
+                        <img src="@if(parse_url($news_item->image)) {{ $news_item->image }} @else {{ asset($news_item::$img_folder . $news_item->image) }} @endif "
+                             class="img-fluid d-block my-3 w-25 rounded">
                     @else
                         <img src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}"
                              class="img-fluid d-block my-3 w-25">

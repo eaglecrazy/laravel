@@ -14,18 +14,19 @@ class AlterTAbleAddSocAuth extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('social_id', 20)
+            $table
+                ->string('social_id', 20)
                 ->default('')
-                ->comment('ID "В контакте"');
-            $table->enum('type_auth', ['site', 'vkontakte', 'github'])
+                ->comment('ID в соцсети');
+            $table
+                ->enum('type_auth', ['site', 'vkontakte', 'github'])
                 ->default('site')
                 ->comment('Тип авторизации');
-            $table->string('avatar', 150)
+            $table
+                ->string('avatar', 150)
                 ->default('')
-                ->comment('ССылка на аватар');;
-            $table->index('social_id');
-
-
+                ->comment('Сcылка на аватар');;
+//            $table->index('social_id');
         });
     }
 

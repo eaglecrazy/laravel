@@ -69,12 +69,6 @@
         <div class="form-group">
             <label for="text">Текст новости</label>
             <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old()){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
-{{--        ВОПРОС            --}}
-{{--        Я попытался сделать как было показано на уроке, чтобы не появлялся текст, если его удалить полностью, и нажать сохранить.     --}}
-{{--        Следующая строчка: --}}
-{{--        <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if($news_item->id) {{ old('text') }} @else {{ old('text') ?? $news_item->text ?? '' }} @endif</textarea>--}}
-{{--        В итоге при открытии редактирования поле пусто, не понимаю, почему на уроке у вас всё работало.      --}}
-{{--        Сделал по другому, но всё равно непонятно.      --}}
             @error('text')
                 <div class="invalid-feedback">
                     @foreach($errors->get('text') as $error) {{ $error }}@endforeach
@@ -89,7 +83,7 @@
                     src="{{ asset(session('temp_image')) }}"
                 @elseif($edit)
                     @if($news_item->image)
-                        src="{{ asset($news_item::$img_folder . $news_item->image) }}"
+                        src="@if(parse_url($news_item->image)) {{ $news_item->image }} @else {{ asset($news_item::$img_folder . $news_item->image) }} @endif "
                     @else
                         src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}"
                     @endif

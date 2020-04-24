@@ -3,7 +3,6 @@
 namespace App\Adaptors;
 
 use App\User;
-//use SocialiteProviders\Manager\OAuth2\User as UserOAuth;
 use Laravel\Socialite\Two\User as UserOAuth;
 
 
@@ -21,7 +20,7 @@ class Adaptor
         switch($socName){
             case 'vkontakte' : $user_data = $this->getUserDataVkontakte($oauth_user, $socName); break;
             case 'github' : $user_data = $this->getUserDataGithub($oauth_user, $socName); break;
-//            default : abort(404);
+            default : abort(404);
         }
 
         //проверка существования юзера
@@ -53,7 +52,6 @@ class Adaptor
 
     private function getUserDataVkontakte(UserOAuth $user, $socName)
     {
-        dd($user->getAvatar());
         return[
                 'name' => $user->getName() ? $user->getName() : ($user->getNickname() ? $user->getNickname() : ''),
                 'email' => $user->accessTokenResponseBody['email'],
