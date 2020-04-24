@@ -3,6 +3,9 @@
 @section('header')
     @include ('header.header')
 @endsection
+@section('js')
+    <script src="{{ asset('js/my.js') }}" defer></script>
+@endsection
 
 @if(session('alert'))
 @section('alert')
@@ -11,6 +14,7 @@
 @endif
 
 @section('content')
+    <div class="alert-place"></div>
 
     <h1>Управление пользователями</h1>
     <table class="table table-striped table-hover">
@@ -19,7 +23,7 @@
             <th>№</th>
             <th>Имя</th>
             <th>E-mail</th>
-            <th>Статус</th>
+            <th>Администратор (асинхронно)</th>
             <th>Посмотреть</th>
             <th>Изменить</th>
             <th>Удалить</th>
@@ -33,7 +37,11 @@
                 <th scope="row">{{ $number++ }}</th>
                 <td>{{ $users_item->name }}</td>
                 <td>{{ $users_item->email }}</td>
-                <td>{{ ($users_item->role === 1) ? 'admin' : 'user' }}</td>
+                <td class="text-center">
+                    @if(Auth::user()->id !== $users_item->id)
+                    <input type="checkbox" class="check-role" {{ ($users_item->role === 1) ? 'checked' : '' }} data-id="{{ $users_item->id }}">
+                    @endif
+                </td>
                 <td>
                     <a href="{{ route('user.show', $users_item) }}" class="btn btn-success" role="button">Посмотреть</a></td>
                 <td>

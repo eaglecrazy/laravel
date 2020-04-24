@@ -17,11 +17,6 @@
 @endif
 
 @section('content')
-{{--ВОПРОС. Почему то к @dump не применяются стили и он выглядит как на картинке dump.png в этой же папке. --}}
-{{-- Это не критично, но @dump штука удобная и хотелось бы пользоваться ей по человечески :) --}}
-{{--    {{  dd($errors) }} работает нормально --}}
-{{--    @dump($errors)--}}
-
     <form class="mx-auto" method="post" enctype="multipart/form-data" action= {{ $edit ? route('admin.news.update', $news_item) : route('admin.news.store') }}>
         @csrf
         @if($edit) @method('put') @endif
