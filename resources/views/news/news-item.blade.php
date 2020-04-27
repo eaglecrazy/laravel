@@ -12,7 +12,7 @@
     @else
         <img src="{{ asset($news_item::$img_folder . 'news-default.jpg') }}" class="img-fluid d-block my-3 w-50">
     @endif
-    <p>{{ $news_item->text }}</p>
+    <p>{!! $news_item->text !!}</p>
     <p>{{ $news_item->date }}</p>
     <a href="{{ $news_item->link }}" class="btn btn-primary btn-lg mb-3 mr-2" role="button">Полный текст новости</a>
 

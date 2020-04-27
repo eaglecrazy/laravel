@@ -3,7 +3,8 @@
     {{ $edit ? 'Изменение' : 'Добавление' }} новости
 @endsection
 @section('js')
-    @if($errors->count())<script src="{{ asset('js/errors.js') }}" defer></script>@endif
+    @if($errors->count())<script defer src="{{ asset('js/errors.js') }}" defer></script>@endif
+{{--    <script src="{{ asset('js/ckeditor.js') }}"></script>--}}
 @endsection
 
 @section('header')
@@ -63,7 +64,8 @@
         </div>
         <div class="form-group">
             <label for="text">Текст новости</label>
-            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old()){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>
+{{--            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old()){{ old('text') }}@elseif($edit){{ $news_item->text }}@endif</textarea>--}}
+            <textarea class="form-control @error('text') is-invalid @enderror" id="text" rows="6" name="text">@if(old()){!! old('text') !!}@elseif($edit){!! $news_item->text !!}@endif </textarea>
             @error('text')
                 <div class="invalid-feedback">
                     @foreach($errors->get('text') as $error) {{ $error }}@endforeach
@@ -93,4 +95,6 @@
             </div>
         <button type="submit" class="btn btn-lg btn-primary ">{{ $edit ? 'Сохранить' : 'Отправить' }}</button>
     </form>
+
+@include('admin.news.textarea-script')
 @endsection

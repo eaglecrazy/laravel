@@ -13,6 +13,7 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .js(['resources/js/errors.js', 'resources/js/user-role.js'], 'public/js/my.js')
+    .js(['resources/js/ckeditor.js'], 'public/js/ckeditor.js')
     .sass('resources/sass/app.scss', 'public/css');
 
 mix.styles('resources/css/news.css', 'public/css/news.css')

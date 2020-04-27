@@ -13,13 +13,12 @@
 @endsection
 
 @section('content')
-    <div>
-        <h2>Разделы</h2>
+    <h2>Разделы</h2>
+    <div class="text-center">
         @foreach ($categories as $category_item)
-            <a href="{{ route('news.category', $category_item->link) }}">
+            <a class="btn btn-info m-2" href="{{ route('news.category', $category_item->link) }}">
                 {{ $category_item->name }}
             </a>
-            <br>
         @endforeach
     </div>
     <hr>
@@ -33,7 +32,7 @@
     <div class="col-12">
         @forelse ($news as $news_item)
             <div class="p-3 news-hover mx-auto rounded news-hover">
-                <a href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}">
+                <a class="news-link" href="{{ route('news.item', [$categories[$news_item->category_id]->link, $news_item]) }}">
                     <h2>{{ $news_item->title }}</h2>
                     @if($news_item->image)
                         <img src="@if(parse_url($news_item->image)) {{ $news_item->image }} @else {{ asset($news_item::$img_folder . $news_item->image) }} @endif "

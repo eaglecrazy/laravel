@@ -36,6 +36,9 @@
                                 <a class="nav-link" href="{{ route('admin.users', null, false) }}">Пользователи</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.tasks.index', null, false) }}">Ресурсы для парсинга</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.news.import', null, false) }}">Импорт новостей</a>
                             </li>
                             <li class="nav-item">
@@ -83,7 +86,6 @@
                         <img src="{{ Auth::user()->avatar }}" alt="аватар" class="rounded-circle" height="50" width="50">
                     @endif
                 @endguest
-
             </ul>
         </div>
     </div>

@@ -23,7 +23,7 @@
     @yield('css')
 </head>
 <body>
-<div id="app">
+{{--<div id="app">--}}
     @yield('header')
         <div class="container">
         <main class="py-4">
@@ -31,6 +31,6 @@
             @yield('content')
         </main>
     </div>
-</div>
+{{--</div>--}}
 </body>
 </html>

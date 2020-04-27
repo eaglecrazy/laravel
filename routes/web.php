@@ -14,6 +14,7 @@ Route::get('/', 'HomeController@index')->name('Home');
 Auth::routes();
 
 Route::group([
+
     'prefix' => 'auth',
     'as' => 'auth.',
     'middleware' => 'not_auth'
@@ -50,12 +51,10 @@ Route::group(
         'middleware' => ['auth', 'is_admin']
     ],
     function () {
-        Route::resource('news', 'NewsController', ['except' => ['show']]);
+        Route::resource('news', 'NewsController');
+        Route::resource('tasks', 'TaskController');
         Route::get('/news/import', 'ParserController@import')->name('news.import');
         Route::get('/news/export', 'NewsController@export')->name('news.export');
-        Route::get('/news/{some}', function () {
-            abort(404);
-        });
         Route::get('/users', 'AdminController@showUsers')->name('users');
     });
 

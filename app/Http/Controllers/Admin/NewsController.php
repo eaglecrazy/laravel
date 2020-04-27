@@ -13,6 +13,11 @@ use App\Exports\NewsExport;
 
 class NewsController extends Controller
 {
+    //новость мы показываем в другом контроллере
+    public function show($some){
+        return abort(404);
+    }
+
     //страница управления новостями
     public function index()
     {
@@ -32,7 +37,7 @@ class NewsController extends Controller
     public function create()
     {
         $categories = Category::getAll();
-        return view('admin.news.create-update', ['categories' => $categories, 'edit' => false]);
+        return view('admin.news.create-edit', ['categories' => $categories, 'edit' => false]);
     }
 
     //добавление новости
@@ -82,7 +87,7 @@ class NewsController extends Controller
     public function edit(News $news)
     {
         $categories = Category::getAll();
-        return view('admin.news.create-update', ['news_item' => $news, 'categories' => $categories, 'edit' => true]);
+        return view('admin.news.create-edit', ['news_item' => $news, 'categories' => $categories, 'edit' => true]);
     }
 
     //удаление новости
@@ -99,8 +104,6 @@ class NewsController extends Controller
     {
         return Excel::download(new NewsExport, 'news.xlsx');
     }
-
-
 
     //валидация идёт в отдельной функции, чтобы не дублировать код в create и update
     private function validateNews(Request $request, bool $isEdit){
