@@ -1,7 +1,9 @@
 <?php
 
+//главная страница не нужна
+//Route::get('/', 'HomeController@index')->name('Home');
+Route::get('/', 'News\NewsController@showAll')->name('Home');
 
-Route::get('/', 'HomeController@index')->name('Home');
 
 /*
 |--------------------------------------------------------------------------
@@ -12,23 +14,16 @@ Route::get('/', 'HomeController@index')->name('Home');
 |
 */
 Auth::routes();
-Route::get('/auth/vk', 'SocialLoginController@loginVK')
-    ->name('loginvk')
-    ->middleware('not_auth');
 
-//        ВОПРОС
-//        Я запретил доступ в посреднике для зарегистрированых пользователей, к этому роуту,
-//        но к нему должен быть доступ незарегистрированного.
-//        Но если зайти на него по ссылке http://laravel.local/auth/vk/response
-//        то сайт падает. Я сделал проерку на исключение InvalidStateException в контроллере,
-//        но оно почему то не отлавливается.
-//        Как сделать правильно? Как заставить это всё работать?
+Route::group([
 
-Route::get('/auth/vk/response', 'SocialLoginController@responseVK')
-    ->name('respovsevk')
-    ->middleware('not_auth');
-
-
+    'prefix' => 'auth',
+    'as' => 'auth.',
+    'middleware' => 'not_auth'
+], function () {
+    Route::get('/{social}', 'SocialLoginController@login')->name('login');
+    Route::get('/{social}/response', 'SocialLoginController@response');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -39,10 +34,7 @@ Route::get('/auth/vk/response', 'SocialLoginController@responseVK')
 |
 */
 Route::resource('user', 'UserController', ['only' => ['edit', 'update', 'show', 'destroy']])
-    -> middleware(['auth', 'user_update_validation']);
-
-
-
+    ->middleware(['auth', 'user_update_validation']);
 
 
 /*
@@ -61,10 +53,10 @@ Route::group(
         'middleware' => ['auth', 'is_admin']
     ],
     function () {
-        Route::resource('news', 'NewsController', ['except' => ['show']]);
-        Route::get('/news/import', 'ParserController@import')->name('news.import');
-        Route::get('/news/export', 'NewsController@export')->name('news.export');
-        Route::get('/news/{some}', function (){ abort(404); });
+        Route::resource('news', 'NewsController');
+        Route::resource('tasks', 'TaskController');
+        Route::get('/import-news', 'ParserController@import')->name('news.import');
+        Route::get('/export-news', 'NewsController@export')->name('news.export');
         Route::get('/users', 'AdminController@showUsers')->name('users');
     });
 

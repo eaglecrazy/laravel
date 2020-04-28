@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\CheckIsAdmin;
+use App\Http\Middleware\TaskValidation;
 use App\Http\Middleware\UserUpdateValidation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 

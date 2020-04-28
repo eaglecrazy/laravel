@@ -22,16 +22,36 @@ class CreateNewsTable extends Migration
     public function up()
     {
         Schema::create('news', function (Blueprint $table) {
-            $table->bigIncrements('id')->unsigned();
-            $table->string('title')->comment('Заголовок новости');
-            $table->text('text')->comment('Текст новости');
-
-            $table->unsignedBigInteger('category_id')->comment('ID категории');
-
-            $table->string('image')
+            $table
+                ->bigIncrements('id')
+                ->unsigned();
+            $table
+                ->string('title')
+                ->comment('Заголовок новости');
+            $table
+                ->text('text')
+                ->comment('Текст новости');
+            $table
+                ->unsignedBigInteger('category_id')
+                ->comment('ID категории');
+            $table
+                ->string('image', 150)
                 ->nullable()
-                ->default(null)
+                ->default('')
                 ->comment('Картинка');
+            $table
+                ->string('link', 150)
+                ->nullable()
+                ->default('')
+                ->comment('Ссылка на новость');
+            $table
+                ->string('date')
+                ->nullable()
+                ->default('')
+                ->comment('Дата новости');
+
+
+
 //            $table->timestamp('created_at')->useCurrent();
 //            $table->timestamp('updated_at')->useCurrent();
             $table->timestamps();

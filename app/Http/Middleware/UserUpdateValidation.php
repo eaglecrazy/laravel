@@ -30,7 +30,6 @@ class UserUpdateValidation
     protected function validator(array $data)
     {
         $rules = RegisterController::getUserValidationRules(User::find($data['id']));
-//        dd($rules);
         //если пароль не вводили, то он останется старым, проверять его не надо
         if($data['password'] === null && $data['password_confirmation'] === null)
             unset($rules['password']);

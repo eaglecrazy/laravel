@@ -100,15 +100,23 @@ class UserController extends Controller
      *
      * @param \App\User $user
      */
-    public
-    function destroy(User $user)
+    public function destroy(User $user)
     {
         $user->delete();
         $alert = ['type' => 'info', 'text' => 'Пользователь удалён.'];
         return redirect()->route('admin.users')->with('alert', $alert);
     }
 
-
+    public function toggleAdmin($id){
+        $user = User::find($id);
+        if($user->role === 0)
+            $user->role = 1;
+        else
+            $user->role = 0;
+        $user->save();
+        $alert = ['type' => 'success', 'text' => 'Данные изменены успешно.'];
+        return view('alert', ['alert' => $alert])->render();
+    }
 
 
 
