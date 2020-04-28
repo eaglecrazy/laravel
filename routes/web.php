@@ -1,7 +1,9 @@
 <?php
 
+//главная страница не нужна
+//Route::get('/', 'HomeController@index')->name('Home');
+Route::get('/', 'News\NewsController@showAll')->name('Home');
 
-Route::get('/', 'HomeController@index')->name('Home');
 
 /*
 |--------------------------------------------------------------------------
@@ -53,8 +55,8 @@ Route::group(
     function () {
         Route::resource('news', 'NewsController');
         Route::resource('tasks', 'TaskController');
-        Route::get('/news/import', 'ParserController@import')->name('news.import');
-        Route::get('/news/export', 'NewsController@export')->name('news.export');
+        Route::get('/import-news', 'ParserController@import')->name('news.import');
+        Route::get('/export-news', 'NewsController@export')->name('news.export');
         Route::get('/users', 'AdminController@showUsers')->name('users');
     });
 

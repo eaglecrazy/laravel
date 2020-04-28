@@ -17,9 +17,9 @@
             <ul class="navbar-nav mr-auto">
 
                 {{-- Меню для всех пользователей --}}
-                <li class="nav-item {{ request()->routeIs('Home') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('Home', null, false) }}">Главная</a>
-                </li>
+{{--                <li class="nav-item {{ request()->routeIs('Home') ? 'active' : '' }}">--}}
+{{--                    <a class="nav-link" href="{{ route('Home', null, false) }}">Главная</a>--}}
+{{--                </li>--}}
 
                 <li class="nav-item @if(preg_match("/^news./", request()->route()->getName())) active @endif">
                     <a class="nav-link" href="{{ route('news.all', null, false) }}">Новости</a>

@@ -19,6 +19,7 @@
         "orchestra/parser": "3.8",
         "predis/predis": "^1.1",
         "socialiteproviders/vkontakte": "^4.0",
+        "unisharp/laravel-ckeditor": "4.7.2",
         "unisharp/laravel-filemanager": "~1.8"
     },
     "require-dev": {

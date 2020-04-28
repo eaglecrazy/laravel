@@ -22,7 +22,7 @@ class NewsController extends Controller
     public function index()
     {
         //$news = News::query()->paginate(20);
-        $news = News::paginate(20);
+        $news = News::orderBy('created_at', 'desc')->paginate(20);
 
         $categories = Category::getAll();
 

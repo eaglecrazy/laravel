@@ -3,8 +3,7 @@
     {{ $edit ? 'Изменение' : 'Добавление' }} новости
 @endsection
 @section('js')
-    @if($errors->count())<script defer src="{{ asset('js/errors.js') }}" defer></script>@endif
-{{--    <script src="{{ asset('js/ckeditor.js') }}"></script>--}}
+    @if($errors->count())<script defer src="{{ asset('js/my.js') }}" defer></script>@endif
 @endsection
 
 @section('header')

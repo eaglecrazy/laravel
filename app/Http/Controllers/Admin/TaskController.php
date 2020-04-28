@@ -81,7 +81,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        $alert = ['type' => 'info', 'text' => 'Ресурс удалён.'];
+            $alert = ['type' => 'info', 'text' => 'Ресурс удалён.'];
         return redirect()->route('admin.tasks.index', $task)->with('alert', $alert);
 
     }

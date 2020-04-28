@@ -5,6 +5,9 @@
 @else
     @section('title', 'Добавление ресурса')
 @endif
+@section('js')
+    @if($errors->count())<script defer src="{{ asset('js/my.js') }}" defer></script>@endif
+@endsection
 
 @section('header')
     @include ('header.header')
@@ -31,7 +34,7 @@
                                 <label for="task" class="col-md-4 col-form-label text-md-right">Ресурс</label>
                                 <div class="col-md-6">
                                     <input id="task" type="text"
-                                           class="form-control @error('task') is-invalid @enderror" name="task"
+                                           class="form-control @error('task') is-invalid @enderror" name="task" autofocus
                                            value="{{ old() ? old('task') : $task->task ?? ''}}">
                                     @error('task')
                                     <span class="invalid-feedback" role="alert">
